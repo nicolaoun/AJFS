@@ -1,0 +1,8 @@
+
+*.temp
+
+ATOMICEmulator/testing/client_21/.qicon
+
+ATOMICEmulator/testing/client_21/.meta/.qicon
+
+ATOMICEmulator/testing/*
