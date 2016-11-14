@@ -9,3 +9,5 @@ ATOMICEmulator/testing/*
 *.zip
 
 Journaling/src/pyinotify/MANIFEST.in
+
+ATOMICEmulator.*
