@@ -31,6 +31,11 @@ SOFTWARE.
 #include "sm_node.h"
 #include <vector>
 
+enum object_t
+{
+    FILE_T,
+    VALUE_T
+};
 
 // timestamp structure
 class Tag {
@@ -60,8 +65,8 @@ class RWObject{
     Tag tg_;
 
     RWObject();
-    RWObject(int oID, const std::string &meta="./.meta");
-    RWObject(const std::string &oID, const std::string &meta="./.meta");
+    RWObject(int oID, object_t, const std::string &meta="./.meta");
+    RWObject(const std::string &oID, object_t, const std::string &meta="./.meta");
 
     std::string get_id();
 
@@ -76,12 +81,14 @@ class RWObject{
 
     bool set_latest_tag(const Tag &tg);
 
+    object_t get_type(){return objType_;}
+
     bool operator == (const RWObject& obj1) const;
     bool operator < (const RWObject& obj1) const;
     bool operator < (const RWObject* obj1) const;
 
   protected:
-    std::string objType_;        // this can be file or value
+    object_t objType_;        // this can be file or value
     std::string file_path_;
     std::string value_;
     std::string meta_dir_;
@@ -112,6 +119,18 @@ class Packet : public Serializable{
     }
     
     virtual void deserialize(std::istream& stream)
+    {
+        // Deserialization code
+        stream >> src_ >> dst_ >> msgType >> counter >> obj.objID_ >> obj.tg_.ts >> obj.tg_.wid;
+    }
+
+    virtual void serialize(std::ostringstream& stream)
+    {
+        // Serialization code
+        stream << src_ <<" "<< dst_ << " " << msgType << " "  << counter << " "  << obj.objID_ << " "  << obj.tg_.ts << " " << obj.tg_.wid;
+    }
+
+    virtual void deserialize(std::istringstream& stream)
     {
         // Deserialization code
         stream >> src_ >> dst_ >> msgType >> counter >> obj.objID_ >> obj.tg_.ts >> obj.tg_.wid;

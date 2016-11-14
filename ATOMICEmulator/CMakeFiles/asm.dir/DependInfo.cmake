@@ -5,8 +5,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/ABD/abd_client.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Protocols/ABD/abd_client.cpp.o"
-  "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/ABD/abd_protocol.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Protocols/ABD/abd_protocol.cpp.o"
   "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/ABD/abd_server.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Protocols/ABD/abd_server.cpp.o"
+  "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/CCHYBRID/cchybrid_client.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Protocols/CCHYBRID/cchybrid_client.cpp.o"
+  "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/CCHYBRID/cchybrid_server.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Protocols/CCHYBRID/cchybrid_server.cpp.o"
+  "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/sm_protocol.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Protocols/sm_protocol.cpp.o"
   "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/arguments.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Utilities/arguments.cpp.o"
   "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/filesystem.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Utilities/filesystem.cpp.o"
   "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/set_operations.cpp" "/Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/CMakeFiles/asm.dir/Utilities/set_operations.cpp.o"

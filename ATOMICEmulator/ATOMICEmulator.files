@@ -1098,8 +1098,6 @@ CMakeFiles/progress.marks
 CMakeFiles/TargetDirectories.txt
 Protocols/ABD/abd_client.cpp
 Protocols/ABD/abd_client.hpp
-Protocols/ABD/abd_protocol.cpp
-Protocols/ABD/abd_protocol.hpp
 Protocols/ABD/abd_server.cpp
 Protocols/ABD/abd_server.hpp
 scripts/kill_servers.sh
@@ -2169,3 +2167,30 @@ main.cpp
 README.md
 servers.list
 TODO
+<<<<<<< HEAD
+Utilities/zhelpers.hpp
+=======
+Protocols/ABD/abd_client.cpp
+Protocols/ABD/abd_client.hpp
+Protocols/ABD/abd_protocol.hpp
+Protocols/ABD/abd_server.cpp
+Protocols/ABD/abd_server.hpp
+Protocols/CCHYBRID/cchybrid-client.cpp
+Protocols/CCHYBRID/cchybrid-client.hpp
+Protocols/CCHYBRID/cchybrid-server.cpp
+Protocols/CCHYBRID/cchybrid-server.hpp
+Protocols/CCHYBRID/cchybrid_protocol.cpp
+Protocols/sm_protocol.cpp
+Protocols/sm_protocol.hpp
+Protocols/ABD/abd_client.cpp
+Protocols/ABD/abd_client.hpp
+Protocols/ABD/abd_server.cpp
+Protocols/ABD/abd_server.hpp
+Protocols/CCHYBRID/cchybrid_client.cpp
+Protocols/CCHYBRID/cchybrid_client.hpp
+Protocols/CCHYBRID/cchybrid_server.cpp
+Protocols/CCHYBRID/cchybrid_server.hpp
+Protocols/sm_protocol.cpp
+Protocols/sm_protocol.hpp
+>>>>>>> master
+Protocols/CCHYBRID/cchybrid_protocol.hpp

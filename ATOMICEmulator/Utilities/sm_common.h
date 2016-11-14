@@ -29,6 +29,8 @@ SOFTWARE.
 #include <string>  
 #include <ostream>
 #include <ctime>
+//network on steroids
+#include "zhelpers.hpp"
 
 class Serializable
 {
@@ -38,31 +40,48 @@ public:
     
     virtual void serialize(std::ostream& stream) = 0;
     virtual void deserialize(std::istream& stream) = 0;
+   // virtual void serialize(std::ostringstream& stream) = 0;
+   //virtual void deserialize(std::istringstream& stream) = 0;
 };
 
-// Server structure
-class Server{
+// Node structure
+/*
+class Node{
 
 public:
-    int serverID;
-    char hostname[100];
-    int port;
-    int sock;
-    
-    Server():
-        serverID(0),
-        port(10000),
-        sock(0)
-    {};
-    
-    bool operator < (const Server& srv) const
+    int nodeID;
+    char hostname[100];     // node hostname
+    char ip_addr[30];       // node ip address
+    int port;               // node incoming port
+    int sock;               // node communication socket
+    zmq::socket_t *z_sock;  // node zmq socket
+
+    Node(){
+        nodeID = 0;
+        port = 10000;
+        sock = 0;
+        z_sock = NULL;
+    }
+        
+    // overloaded < operator
+    bool operator < (const Server& n) const
     {
-        return (this->serverID < srv.serverID);
+        return (this->nodeID < n.nodeID);
+    }
+
+    // overloaded == operator
+    bool operator == (const Server& n) const
+    {
+        //Check if n1 == n2
+        return (this->nodeID == n.nodeID);
     }
 };
+*/
 
-std::string get_datetime();
-std::string get_date();
+std::string get_datetime_str();
+std::string get_date_str();
+
+double get_datetime_sec();
 
 
 

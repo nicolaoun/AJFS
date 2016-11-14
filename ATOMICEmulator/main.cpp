@@ -7,16 +7,24 @@
 //
 
 #include <iostream>
-//#include "Proto-ABD/ABDClient.hpp"
+//#include "Proto-ABD/ABDclient.hpp"
 //#include "Proto-ABD/ABDReader.hpp"
 #include "ABD/abd_client.hpp"
 #include "ABD/abd_server.hpp"
+#include "CCHYBRID/cchybrid_client.hpp"
+#include "CCHYBRID/cchybrid_server.hpp"
 #include "arguments.h"
 #include <string>
 
 using namespace std;
 
 #define MIN_TIMEOUT 1
+
+template <class ProtoType>
+void handle_client(ProtoType* client, Arguments);
+
+template <class ProtoType>
+void handle_server(ProtoType* s, Arguments);
 
 void in_error(std::string e)
 {
@@ -29,8 +37,6 @@ int main(int argc, char** argv)
     // Wrap everything in a try block.  Do this every time,
     // because exceptions will be thrown for problems.
     try {
-        double frequency;
-        int ops = 10;
         Arguments args;
         args.parseArguments(argc, argv);
 
@@ -46,73 +52,29 @@ int main(int argc, char** argv)
 
             int client_type = (args.type == "read")? READER : WRITER;
 
-            //ABDClient *r = new ABDClient (args.nodeid, READER, 10, 10);
-            ABDClient client(args.nodeid, client_type, args.path);
-            client.set_debug_lvl(args.debuglvl);
+            ABDClient *abd_client;
+            CCHybridClient *cchybrid_client;
 
-            //show operation menu - "yes" or "y":show menu
-            if (args.menu == "yes" || args.menu == "Yes" || args.menu == "y" || args.menu == "Y")
+            switch((Protocol) args.protocol)
             {
-                int choice = 0;
-
-                while (choice!=3) {
-
-                    std::cout << "\n\n***** Menu *****\n";
-                    std::cout << "1. "<< args.type <<"\n";
-                    std::cout << "2. Auto "<< args.type <<"\n";
-                    std::cout << "3. Exit\n";
-                    std::cout << "Choice:";
-                    std::cin >> choice;
-
-
-                    switch (choice) {
-                    case 1:
-                        std::cout << "\nInvoking "<< args.type <<" operation....\n";
-
-                        client.invoke_op(args.objid, ".");
-                        break;
-
-                    // perform multiple opearions in a specified frequency
-                    case 2:
-                        std::cout << "\nEnter "<< args.type <<" frequency (in seconds): ";
-                        std::cin >> frequency;
-                        while(ops > 0)
-                        {
-                            client.invoke_op(args.objid, ".");
-                            int timeout = (rand()%((int) frequency));
-
-                            std::cout << "\n\n****************\nNext operation in " << timeout << " sec...\n****************\n\n";
-
-                            if(timeout < MIN_TIMEOUT)
-                                sleep(MIN_TIMEOUT);
-                            else
-                                sleep(timeout);
-
-                            ops --;
-                        }
-                        break;
-
-                    default:
-                        std::cout << "Exiting....\n\n";
-                        break;
-                    }
-
-                }
-
-                client.terminate();
-            }
-            else //just invoke a single operation
-            {
-                client.invoke_op(args.objid, ".");
-
-                if ( client_type == READER || (client_type == WRITER && client.has_commited()) )
-                {
-                    exit(EXIT_SUCCESS);
-                }
-                else
-                {
-                    exit(EXIT_FAILURE);
-                }
+            case PROTO_ABD:
+                std::cout << "*********************************************************\n";
+                std::cout << "                 Protocol running: ABD\n";
+                std::cout << "*********************************************************\n\n";
+                abd_client = new ABDClient(args.nodeid, client_type, args.path);
+                handle_client<ABDClient>(abd_client, args);
+                break;
+            case PROTO_CCHYBRID:
+                std::cout << "*********************************************************\n";
+                std::cout << "                 Protocol running: CCHYBRID\n";
+                std::cout << "*********************************************************\n\n";
+                std::cout << "Root Dir:" << args.path << "\n";
+                cchybrid_client = new CCHybridClient(args.nodeid, client_type, args.path);
+                handle_client<CCHybridClient>(cchybrid_client, args);
+                break;
+            default:
+                std::cout << "\n *** [ERROR] This protocol is not implemented yet! ***\n\n";
+                exit(EXIT_FAILURE);
             }
         }
 
@@ -123,14 +85,118 @@ int main(int argc, char** argv)
                 in_error("Expected port number for the Server. Use -p option.");
             }
 
+            ABDServer *abd_server;
+            CCHybridServer *cchybrid_server;
+
             //!!ABDServer *s = new ABDServer (args.nodeid, args.port);
-            ABDServer s(args.nodeid, args.port);
-            s.set_debug_lvl(args.debuglvl);
-            s.start();
+            switch( (Protocol) args.protocol)
+            {
+            case PROTO_ABD:
+                std::cout << "*********************************************************\n";
+                std::cout << "                 Protocol running: ABD\n";
+                std::cout << "*********************************************************\n\n";
+                abd_server = new ABDServer(args.nodeid, args.port);
+                handle_server<ABDServer>(abd_server, args);
+                break;
+            case PROTO_CCHYBRID:
+                std::cout << "*********************************************************\n";
+                std::cout << "                 Protocol running: CCHYBRID\n";
+                std::cout << "*********************************************************\n\n";
+                cchybrid_server = new CCHybridServer(args.nodeid, args.port);
+                handle_server<CCHybridServer>(cchybrid_server, args);
+                break;
+            default:
+                std::cout << "\n *** [ERROR] This protocol is not implemented yet! ***\n\n";
+                exit(EXIT_FAILURE);
+            }
         }
 
-    } catch (const std::exception &e) {
+    } catch (const std::exception &e)
+    {
         std::cerr << "ASM : " << e.what() << std::endl;
     }
+}
+
+template <class ProtoType>
+void handle_client(ProtoType* client, Arguments args)
+{
+    object_t o_type;
+    double frequency;
+    int ops = 10;
+
+    int client_type = (args.type == "read")? READER : WRITER;
+
+    //check the type of the object
+    if( args.value == "" )
+        o_type = FILE_T;
+    else
+        o_type = VALUE_T;
+
+
+    client->set_debug_lvl(args.debuglvl);
+
+    //show operation menu - "yes" or "y":show menu
+    if (args.menu == "yes" || args.menu == "Yes" || args.menu == "y" || args.menu == "Y")
+    {
+        int choice = 0;
+
+        while (choice!=3) {
+
+            std::cout << "\n\n***** Menu *****\n";
+            std::cout << "1. "<< args.type <<"\n";
+            std::cout << "2. Auto "<< args.type <<"\n";
+            std::cout << "3. Exit\n";
+            std::cout << "Choice:";
+            std::cin >> choice;
+
+
+            switch (choice) {
+            case 1:
+                std::cout << "\nInvoking "<< args.type <<" operation....\n";
+
+                client->invoke_op(args.objid, o_type, args.value);
+                break;
+
+            // perform multiple opearions in a specified frequency
+            case 2:
+                std::cout << "\nEnter "<< args.type <<" frequency (in seconds): ";
+                std::cin >> frequency;
+                while(ops > 0)
+                {
+                    client->invoke_op(args.objid, o_type, args.value);
+                    int timeout = (rand()%((int) frequency));
+
+                    std::cout << "\n\n****************\nNext operation in " << timeout << " sec...\n****************\n\n";
+
+                    if(timeout < MIN_TIMEOUT)
+                        sleep(MIN_TIMEOUT);
+                    else
+                        sleep(timeout);
+
+                    ops --;
+                }
+                break;
+
+            default:
+                std::cout << "Exiting....\n\n";
+                break;
+            }
+
+        }
+
+        client->terminate();
+    }
+    else //just invoke a single operation
+    {
+        client->invoke_op(args.objid, o_type, args.value);
+        exit(EXIT_SUCCESS);
+    }
+}
+
+template <class ProtoType>
+void handle_server(ProtoType* s, Arguments args)
+{
+    s->set_debug_lvl(args.debuglvl);
+    s->start();
 }
 

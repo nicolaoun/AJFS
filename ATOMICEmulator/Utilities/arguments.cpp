@@ -39,7 +39,7 @@ void unstringify( T& x, const std::string& s ){
 void Arguments::parseArguments(int argc, char** argv){
 	optind = 1;
 	int c;
-	const char optionString[] = "f:v:o:p:t:i:m:d:";
+    const char optionString[] = "f:v:o:p:t:i:m:d:a:";
 	while( (c = getopt(argc, argv, optionString)) != -1 ) {
 		switch (c) {
 			case 'f':
@@ -66,20 +66,12 @@ void Arguments::parseArguments(int argc, char** argv){
             case 'd':
                 unstringify(debuglvl, optarg);
                 break;
+            case 'a':
+                unstringify(protocol, optarg);
+                break;
 		}
 	}
 
-	// Check Required Arguments
-	/* //!!
-	 * ASK NICK, if the arguments have default values, why are they required arguments?
-	if(nodeid = -1){
-
-	}
-
-	if(type = ""){
-
-	}
-	 */
 }
 
 
@@ -91,5 +83,6 @@ Arguments::Arguments() :
 		type("serve"),
 		nodeid(0),
         menu("no"),
-        debuglvl(4)
+        debuglvl(4),
+        protocol(1)
 {}

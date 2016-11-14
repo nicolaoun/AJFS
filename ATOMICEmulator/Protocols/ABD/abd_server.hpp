@@ -25,18 +25,15 @@ SOFTWARE.
 #ifndef ABDServer_hpp
 #define ABDServer_hpp
 
-#include "abd_protocol.hpp"
+#include "sm_protocol.hpp"
 
 #define MAX_CONNECTIONS 5
 
 // details of a single client
-class Client {
+/*
+class Client : Node {
 public:
-    int nodeID;             // client id
     int  req_counter;       // used to distinguish stale messages from this client
-    int  sock;              // communication socket
-    char hostname[100];     // client hostname
-    char ip_addr[30];       // client ip address
 
     // overloaded == operator
     bool operator == (const Client& c1) const
@@ -45,13 +42,14 @@ public:
         return (this->nodeID == c1.nodeID && this->sock == c1.sock);
     }
 };
+*/
 
 
-class ABDServer : smClient{
+class ABDServer : smNode{
 public:
     ABDServer(int serverID, int port, int S=0, int W=0, int R=0, int Q=0, int nfq=0, double cInt=5);
     void start();
-    void serveClient(Client *c);
+    void serveClient(smNode *c);
     void set_debug_lvl(int lvl){debuglvl = lvl;}
     void terminate();
     
@@ -68,7 +66,7 @@ protected:
     std::string value_;                     // local value
     
     std::set<RWObject *> objects_set;         //set of all replicas at the server
-    std::vector<Client> serve_clients_;     //set of clients served by the server
+    std::vector<smNode> serve_clients_;     //set of clients served by the server
     
     RWObject getLocalReplica(RWObject obj);    //return a pointer to the replica
     RWObject insertLocalReplica(RWObject obj);  //return a pointer to the replica
@@ -97,9 +95,9 @@ protected:
     void listenSocket();
     
     void acceptClientConnection();
-    void serve(Packet*, Client *c, RWObject r);
+    void serve(Packet*, smNode *c, RWObject r);
     
-    void prepare_pkt(Client *dest, int msgType, RWObject);
+    void prepare_pkt(smNode *dest, int msgType, RWObject);
 
 };
 

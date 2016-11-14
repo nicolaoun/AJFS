@@ -37,6 +37,7 @@ public:
     std::string path;
     std::string value;
     std::string menu;
+    int protocol;
     
     void parseArguments(int argc, char** argv);
     Arguments();

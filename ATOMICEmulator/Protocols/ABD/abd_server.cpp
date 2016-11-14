@@ -26,7 +26,7 @@
 
 ABDServer::ABDServer(int serverID, int port, int S, int W, int R, int Q, int nfq, double cInt) {
     
-    nodeID_ = serverID;
+    nodeID = serverID;
     S_ = S;     //# of servers
     W_ = W;     //# of writers
     R_ = R;     //# of readers
@@ -38,7 +38,7 @@ ABDServer::ABDServer(int serverID, int port, int S, int W, int R, int Q, int nfq
     
     // specify the Server's paths
     std::stringstream sstm;
-    sstm << "./server_" << nodeID_;
+    sstm << "./server_" << nodeID;
     srv_root_dir_ = sstm.str();
     
     if( !directoryExists(srv_root_dir_) ){
@@ -61,7 +61,7 @@ ABDServer::ABDServer(int serverID, int port, int S, int W, int R, int Q, int nfq
     }
     
     char log_fname[10];
-    sprintf(log_fname, "/s%d",nodeID_);
+    sprintf(log_fname, "/s%d",nodeID);
     logs_dir_ += log_fname;
     init_logfile(logs_dir_);
     
@@ -90,9 +90,9 @@ void ABDServer::start(){
     //int child_num=0;
     struct timeval timeout;
     int ready;
-    Client *tmp_client;
+    smNode *tmp_client;
     
-    DEBUGING(4, "Starting server %d\n", nodeID_);
+    DEBUGING(4, "Starting server %d\n", nodeID);
     
     timeout.tv_sec=1;
     timeout.tv_usec=0;
@@ -160,7 +160,7 @@ void ABDServer::listenSocket()
 //Method to accept a new connection request from a client
 void ABDServer::acceptClientConnection()
 {
-    Client *tmp_client;
+    smNode *tmp_client;
     
     clientptr = (struct sockaddr *) &client;
     clientlen = sizeof(client);
@@ -177,8 +177,8 @@ void ABDServer::acceptClientConnection()
     //setnonblocking(newsock_);
     
     // Initialize new client
-    tmp_client = new Client();
-    tmp_client->req_counter = 0;
+    tmp_client = new smNode();
+    tmp_client->req_counter_ = 0;
     tmp_client->sock = newsock_;
     
     // add client in the list of clients
@@ -211,12 +211,12 @@ void ABDServer::acceptClientConnection()
 }
 
 
-void ABDServer::serveClient(Client *tmp_client)
+void ABDServer::serveClient(smNode *tmp_client)
 {
     Packet p;
     std::string type_str;
     RWObject local_replica;
-    std::vector<Client>::iterator it;
+    std::vector<smNode>::iterator it;
     int msg_type = READ;
     
     while (msg_type != TERMINATE) {
@@ -309,7 +309,8 @@ RWObject ABDServer::getLocalReplica(RWObject obj)
     // if the object is not found -> initialize the object with default values
     if( oit == objects_set.end() )
     {
-        RWObject temp_obj(obj.get_id(), meta_dir_);
+        // Create an object of the same type
+        RWObject temp_obj(obj.get_id(), obj.get_type(), meta_dir_);
         
         //oit = objects_set.insert(oit, temp_obj);
         ret_obj = insertLocalReplica(temp_obj);
@@ -349,11 +350,11 @@ RWObject ABDServer::insertLocalReplica(RWObject obj)
     
 }
 
-void ABDServer::serve(Packet *pkt, Client *c, RWObject replica)
+void ABDServer::serve(Packet *pkt, smNode *c, RWObject replica)
 {
     //int pid = pkt->src_ - S_;   // position of requesting process in the counter array
     int pid = pkt->src_;
-    std::vector<Client>::iterator cit;
+    std::vector<smNode>::iterator cit;
     
     //if(!crashed_){
     c->nodeID = pid;
@@ -377,9 +378,9 @@ void ABDServer::serve(Packet *pkt, Client *c, RWObject replica)
     }
     
     
-    if(pkt->counter >= c->req_counter)
+    if(pkt->counter >= c->req_counter_)
     {
-        c->req_counter = pkt->counter;
+        c->req_counter_ = pkt->counter;
         
         // Send the appropriate reply
         switch(pkt->msgType){
@@ -445,27 +446,27 @@ void ABDServer::serve(Packet *pkt, Client *c, RWObject replica)
         DEBUGING(2,"Discarding pkt from %d, pktCounter:%d, srvCounter:%d\n",
                  pkt->src_,
                  pkt->counter,
-                 c->req_counter);
+                 c->req_counter_);
         prepare_pkt(c, COUNTER_ERROR, pkt->obj);//,0);
     }
     //}
     /*else
-     DEBUGING(2,"Server %d crashed.\n",nodeID_);
+     DEBUGING(2,"Server %d crashed.\n",nodeID);
      */
 }
 
-void ABDServer::prepare_pkt(Client *dest, int msgType, RWObject obj){
+void ABDServer::prepare_pkt(smNode *dest, int msgType, RWObject obj){
     
     Packet p;
     std::set<Tag>::iterator it;
     
     //Specify the destination of the packet
-    p.src_=nodeID_;
+    p.src_=nodeID;
     p.dst_=dest->nodeID;
     
     //Specify the fields of the packet accordingly
     p.msgType = msgType;
-    p.counter = dest->req_counter;
+    p.counter = dest->req_counter_;
     p.obj = obj;
     //p.tg = tg_;
     //p.value = value_;
