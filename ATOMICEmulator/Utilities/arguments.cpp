@@ -39,7 +39,7 @@ void unstringify( T& x, const std::string& s ){
 void Arguments::parseArguments(int argc, char** argv){
 	optind = 1;
 	int c;
-    const char optionString[] = "f:v:o:p:t:i:m:d:a:";
+    const char optionString[] = "f:v:o:p:t:i:m:d:a:c:h:";
 	while( (c = getopt(argc, argv, optionString)) != -1 ) {
 		switch (c) {
 			case 'f':
@@ -56,6 +56,10 @@ void Arguments::parseArguments(int argc, char** argv){
 				break;
 			case 't':
 				unstringify(type, optarg);
+                if(type!="read" && type!="write" && type!="serve")
+                {
+                    throw std::runtime_error("illegal type: "+ type +". Try using one of [read,write,serve].");
+                }
 				break;
 			case 'i':
 				unstringify(nodeid, optarg);
@@ -69,9 +73,33 @@ void Arguments::parseArguments(int argc, char** argv){
             case 'a':
                 unstringify(protocol, optarg);
                 break;
+            case 'c':
+                unstringify(crashes, optarg);
+                break;
+            case 'h':
+            default:
+                printHelp();
 		}
 	}
 
+}
+
+void Arguments::printHelp()
+{
+    std::cout << "Usage: "<<std::setw(5)<<"./asm [-option1] [value1] [-option2] [value2]....\n";
+    std::cout << "Options:\n";
+    std::cout << std::setw(10) << "-t" <<std::string(5,' ')<<"Operation type. Legal values: {read,write,server}.\n";
+    std::cout << std::setw(10) << "-o" <<std::string(5,' ')<<"Object identifier. In case the object is a file this is the object's filename.\n";
+    std::cout << std::setw(10) << "-i" <<std::string(5,' ')<<"Node identifier.\n";
+    std::cout << std::setw(10) << "-c" <<std::string(5,' ')<<"Maximum number of crash failures.\n";
+    std::cout << std::setw(10) << "-p" <<std::string(5,' ')<<"Port number to listen. Used only with the {serve} type.\n";
+    std::cout << std::setw(10) << "-a" <<std::string(5,' ')<<"Algorithm to run [1: ABD, 6:CCHybrid]\n";
+    std::cout << std::setw(10) << "-f" <<std::string(5,' ')<<"Object path if object is a file.\n";
+    std::cout << std::setw(10) << "-v" <<std::string(5,' ')<<"Object value (if not a file).\n";
+    std::cout <<"\n";
+    std::cout << std::setw(10) << "-d" <<std::string(5,' ')<<"Debug level [1-7]. 1 prints everything while 7 most important info.\n";
+    std::cout << std::setw(10) << "-m" <<std::string(5,' ')<<"Presents a menu or not. You have to type [y,yes,Y,Yes].\n";
+    exit(0);
 }
 
 
@@ -84,5 +112,6 @@ Arguments::Arguments() :
 		nodeid(0),
         menu("no"),
         debuglvl(4),
-        protocol(1)
+        protocol(1),
+        crashes(-1)
 {}

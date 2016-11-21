@@ -47,10 +47,10 @@ protected:
     int sock_;                              // local socket
     int port_;                              // local port
     
-    std::unordered_map<std::string, CCHybridReplica> local_objects_;         //set of all replicas at the server
+    std::unordered_map<std::string, CCHybridObject> local_objects_;         //set of all replicas at the server
     std::vector<smNode> serve_clients_;     //set of clients served by the server
     
-    CCHybridReplica *get_local_replica(RWObject obj);    //return a pointer to the replica
+    CCHybridObject *get_local_replica(CCHybridObject obj);    //return a pointer to the replica
 
     int non_faulty_qid_;                    // id of the non-faulty quorum
     
@@ -77,9 +77,9 @@ protected:
     void listenSocket();
     
     void acceptClientConnection();
-    void serve(Packet*, smNode *c, CCHybridReplica *r);
+    void serve(CCHybridPacket*, smNode *c, CCHybridObject *r);
     
-    CCHybridPacket prepare_pkt(smNode *dest, int msgType, CCHybridReplica);
+    CCHybridPacket prepare_pkt(smNode *dest, int msgType, CCHybridObject);
 
 };
 

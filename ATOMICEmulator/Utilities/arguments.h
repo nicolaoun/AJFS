@@ -26,6 +26,8 @@ SOFTWARE.
 #define ASM_ARGUMENTS_H
 
 #include <string>
+#include <iomanip>
+#include <iostream>
 
 class Arguments{
 public:
@@ -38,8 +40,10 @@ public:
     std::string value;
     std::string menu;
     int protocol;
+    int crashes;
     
     void parseArguments(int argc, char** argv);
+    void printHelp();
     Arguments();
 };
 

@@ -45,7 +45,7 @@ void smNode::DEBUGING(int level, const char *format, ...)
         vsprintf(formattedstr, format, ap);
         va_end(ap);
         
-        sprintf(outstr, "[INFO]%10s %d: %s",
+        sprintf(outstr, "[INFO]%10s %d: %s\n",
                 rolestr[role_],
                 nodeID,
                 formattedstr);
@@ -58,7 +58,7 @@ void smNode::DEBUGING(int level, const char *format, ...)
     }
     else
     {
-        REPORTERROR("Debug msg too long.\n");
+        REPORTERROR("Debug msg too long.");
     }
 }
 
@@ -77,7 +77,7 @@ void smNode::REPORTERROR(const char *format, ...)
         vsprintf(errorstr, format, ap);
         va_end(ap);
         
-        sprintf(errorout, "[ERROR]%10s %d: %s",
+        sprintf(errorout, "[ERROR]%10s %d: %s\n",
                 rolestr[role_],
                 nodeID,
                 errorstr);
@@ -125,7 +125,7 @@ void smNode::init_logfile(std::string file){
     //sprintf(infofile,"%s.info.log", logfile.c_str());
     //sprintf(errorfile,"%s.error.log", logfile.c_str());
     
-    DEBUGING(7, "\t%s - DEBUG_LEVEL %d\n************************\n", get_datetime_str().c_str(), debuglvl);
+    DEBUGING(7, "\t%s - DEBUG_LEVEL %d\n************************", get_datetime_str().c_str(), debuglvl);
 }
 
 /**********************************************************/
@@ -145,19 +145,19 @@ bool smNode::send_file(int sock, char* fpath)
     fs_pkt.fsize = getFileSize(fpath);
     fs_pkt.counter = req_counter_;
     
-    DEBUGING(2, "Size of file %s is %d bytes\n", fpath, fs_pkt.fsize);
+    DEBUGING(2, "Size of file %s is %d bytes", fpath, fs_pkt.fsize);
     
     // Send file size
     if ( !send_pkt<CTRLPacket>(sock, &fs_pkt) )
     {
         // error while sending the filesize
-        REPORTERROR("Error sending the size of file %s.\n", fpath);
+        REPORTERROR("Error sending the size of file %s.", fpath);
         return false;
     }
     
     // if the file does not exists - return
     if (fs_pkt.fsize == -1) {
-        DEBUGING(2, "No file to be transmitted.\n");
+        DEBUGING(2, "No file to be transmitted.");
         return true;
     }
     else //otherwise send the file
@@ -177,7 +177,7 @@ bool smNode::send_file(int sock, char* fpath)
             
             infile.read(buffer, bytes_read);                    // read MAX_BUFFER_SIZE bytes from the file
             
-            DEBUGING(1, " ** Read bytes: %d\n", bytes_read);
+            DEBUGING(1, " ** Read bytes: %d", bytes_read);
             
             try
             {
@@ -188,12 +188,12 @@ bool smNode::send_file(int sock, char* fpath)
                 REPORTERROR("Sending Interupted!!Err No: %d", err);
             }
             
-            DEBUGING(1, " ** Transmitted file bytes: %d\n", bytes_sent);
+            DEBUGING(1, " ** Transmitted file bytes: %d", bytes_sent);
             
             if ( bytes_sent < bytes_read )
             {
                 // error while sending the data
-                REPORTERROR("Error sending file block. READ:%d bytes, SENT:%d bytes\n", bytes_read, bytes_sent);
+                REPORTERROR("Error sending file block. READ:%d bytes, SENT:%d bytes", bytes_read, bytes_sent);
                 infile.close();
                 exit(EXIT_FAILURE);
             }
@@ -222,11 +222,11 @@ bool smNode::send_file(int sock, char* fpath)
         
         if(transmitted_bytes == fs_pkt.fsize)
         {
-            DEBUGING(2, "File transmitted correclty.\n");
+            DEBUGING(2, "File transmitted correclty.");
         }
         else
         {
-            REPORTERROR("Transmitted bytes do not match file size: TX = %d bytes, FS = %d bytes\n",
+            REPORTERROR("Transmitted bytes do not match file size: TX = %d bytes, FS = %d bytes",
                         transmitted_bytes,
                         fs_pkt.fsize);
             return false;
@@ -247,24 +247,24 @@ bool smNode::rcv_file(int sock, char* fpath)
     struct CTRLPacket fs_pkt;
     
     // rcv the file size
-    DEBUGING(1, "Expecting to receive FILESIZE at socket %d...\n", sock);
+    DEBUGING(1, "Expecting to receive FILESIZE at socket %d...", sock);
     //rcv_bytes = (int) recv(sock, &fs_pkt, sizeof(fs_pkt),0);
     
     if ( !rcv_pkt<CTRLPacket>(sock, &fs_pkt) || fs_pkt.msgType != CTRL_FSIZE) {
         // Error getting size
-        REPORTERROR("Receiving file size at socket %d.\n", sock);
+        REPORTERROR("Receiving file size at socket %d.", sock);
         return false;
     }
     else
     {
         // sender does not have the file
         if ( fs_pkt.fsize == -1 ) {
-            DEBUGING(2, "Sender reported file does not exist (Size: %d).\n", fs_pkt.fsize);
+            DEBUGING(2, "Sender reported file does not exist (Size: %d).", fs_pkt.fsize);
             return true;
         }
         else
         {
-            DEBUGING(2, "Waiting to receive a file of size: %d bytes.\n", fs_pkt.fsize);
+            DEBUGING(2, "Waiting to receive a file of size: %d bytes.", fs_pkt.fsize);
             
             // open the output file : flags - truncate previous content, output, append, binary
             std::ofstream outfile(fpath,  std::ios::out | std::ios::binary);
@@ -280,7 +280,7 @@ bool smNode::rcv_file(int sock, char* fpath)
                 
                 if ( rcv_bytes < 0) {
                     // Error receiving file
-                    REPORTERROR("\n Receiving file %s at socket %d.\n", fpath, sock);
+                    REPORTERROR("\n Receiving file %s at socket %d.", fpath, sock);
                     outfile.close();
                     return false;
                 }
@@ -307,10 +307,10 @@ bool smNode::rcv_file(int sock, char* fpath)
             outfile.close();
             
             if (transmitted_bytes == fs_pkt.fsize) {
-                DEBUGING(2, "File %s received successfully.\n", fpath);
+                DEBUGING(2, "File %s received successfully.", fpath);
             }
             else{
-                REPORTERROR("\nTransmitted bytes do not match file size: TX = %d bytes, FS = %d bytes.\n",
+                REPORTERROR("\nTransmitted bytes do not match file size: TX = %d bytes, FS = %d bytes.",
                             transmitted_bytes,
                             fs_pkt.fsize
                             );
@@ -328,7 +328,7 @@ void smNode::parse_hosts(const char *file){
     smNode srv;
 
     
-    DEBUGING(2, "Reading file: %s\n",
+    DEBUGING(2, "Reading file: %s",
              file);
     
     if(!(fp=fopen(file,"r"))){
@@ -340,7 +340,7 @@ void smNode::parse_hosts(const char *file){
             
             servers_list_.push_back(srv);
             
-            DEBUGING(2, "SID:%d, Host:s%s, Port:%d\n",
+            DEBUGING(2, "SID:%d, Host:%s, Port:%d",
                      srv.nodeID,
                      srv.hostname,
                      srv.port);
@@ -378,8 +378,7 @@ void smNode::connect_to_hosts(){
         
 	} // end EOF while
 
-	DEBUGING(2, "\nConnected to %d servers... \n\n", servers_connected_.size());
-
+    DEBUGING(2, "Connected to %d servers... ", servers_connected_.size());
 }
 
 /**
@@ -391,7 +390,7 @@ bool smNode::connect_to_server(smNode *s)
     struct sockaddr_in _server;
     struct sockaddr *serverptr;
     struct hostent *rem;
-    
+
     if ((s->sock  = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     { /* Create socket */
         REPORTERROR("Socket");
@@ -418,7 +417,7 @@ bool smNode::connect_to_server(smNode *s)
         return false;
     }
     else{
-        DEBUGING(6, "Connected to Server %d on host %s, port %d, sock %d\n",
+        DEBUGING(6, "Connected to Server %d on host %s, port %d, sock %d",
                  s->nodeID,
                  s->hostname,
                  s->port,
@@ -428,12 +427,9 @@ bool smNode::connect_to_server(smNode *s)
     return true;
 }
 
+/*
 bool smNode::connect_to_node(smNode *n)
 {
-    //  Prepare our context and socket
-    zmq::context_t context (1);
-    zmq::socket_t socket (context, ZMQ_REQ);
-
     n->z_sock = &socket;
 
     // Configure socket to not wait at close time
@@ -449,6 +445,7 @@ bool smNode::connect_to_node(smNode *n)
 
     return true;
 }
+*/
 
 
 void smNode::setnonblocking(int sock)
