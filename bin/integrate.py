@@ -22,7 +22,7 @@ def update_global_record(global_rec_file,inode_no,line_no,type_of_update):
            updategRec = open(global_rec_file,"w")
            for l in range(0,len(tempgRFile)):
               updategRec.write(tempgRFile[l] + '\n')
-           updategRec.close() 
+           updategRec.close()
 
 
 def get_global_record(global_rec_file,inode_no,stat_req):
@@ -101,7 +101,7 @@ def merge_journals(CURR_CLIENT__,inodeid__):
         
 
 def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src):
-        #STILL NEED TO TAKE NEW LINES AND APPEN AT THE END OF LOCAL JOURNAL
+        #STILL NEED TO TAKE NEW LINES AND APPEND AT THE END OF LOCAL JOURNAL
 	#--- set the time interval to check for new files (in seconds) below 
 	#    this interval should be smaller than the interval new files appear!
 	t = 1

@@ -21,4 +21,5 @@ do
     port=$(echo "$port+1" | bc)
 done # servers
 
-gnome-terminal "${foo[@]}"
+#gnome-terminal "${foo[@]}"
+gnome-terminal --working-directory=/home/count/AJFSRepo/bin -e './asm -t serve -p 4000 -i 1'

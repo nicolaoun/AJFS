@@ -11,3 +11,5 @@ ATOMICEmulator/testing/*
 Journaling/src/pyinotify/MANIFEST.in
 
 ATOMICEmulator.*
+
+bin/*

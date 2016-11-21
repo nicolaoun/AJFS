@@ -17,7 +17,7 @@ wm = pyinotify.WatchManager()  # Watch Manager
 #mask = pyinotify.IN_DELETE | pyinotify.IN_CREATE | pyinotify.IN_MODIFY | pyinotify.IN_MOVE_SELF | pyinotify.IN_ATTRIB # watched events
 
 mask = pyinotify.ALL_EVENTS
-JOURNAL_SIZE = 10
+JOURNAL_SIZE = 30
 CURR_CLIENT = "0"
 
 class EventHandler(pyinotify.ProcessEvent):
