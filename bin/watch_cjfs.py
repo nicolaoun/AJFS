@@ -48,8 +48,6 @@ class EventHandler(pyinotify.ProcessEvent):
 		openGlobalRec = open(splits[0] + '/global/globalRecord', "r")
 	 	line = openGlobalRec.readline()
 		while line!="": #increment global rec lines
-		   #print "NEW LINE"
-		   #print line 
 		   globalSplit = line.split(',')
 		   #print event.pathname
 		   #print globalSplit[0]
@@ -68,8 +66,6 @@ class EventHandler(pyinotify.ProcessEvent):
 	fileNameCheckLen = len(splits[2])	
 	checkGoutput = splits[2].rsplit('-',1)
 	updatedFile = path #splits[0] + '/wf/' + splits[2].strip('~')
-	print "NEW"	
-	print checkGoutput
 	bkupFile = splits[0] + '/temp_cjfs/' + splits[2].strip('~')
         globalRecFile = splits[0] + '/global/globalRecord' # to keep inode filename mapping
 	
@@ -81,7 +77,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	
 	#print checkGoutput
 	if checkGoutput[0][-4:] == '.swp' or  checkGoutput[0] == '.goutputstream': # and splits[2][fileNameCheckLen-1] != '~':
-		print("Un-tracked file changed...")
+	   print("-")
 
 	#elif type_of_change == 'Delete-Renamed-' and checkGoutput[-4:] == '.swp' or  checkGoutput[0] != '.goutputstream':
 	elif type_of_change == 'Delete-Renamed-':
@@ -92,13 +88,9 @@ class EventHandler(pyinotify.ProcessEvent):
 	#elif type_of_change == 'Modified-' and checkGoutput[0] != '.goutputstream' or checkGoutput[-4:] != '.swp' and splits[2][fileNameCheckLen-1] != '~':
 	elif type_of_change == 'Modified-':
 	   if os.path.isfile(bkupFile):
-	      #print type_of_change + ": " + path
-	      #print splits[2][fileNameCheckLen-1]
 	      #use difflib here compare the two files
 	      difference = difflib.ndiff(open(bkupFile).readlines(), open(updatedFile).readlines())
 	      jrnlWriteBuff = list(difference) #convert all changes to a list
-	      #print "After Diff: "
-              #print jrnlWriteBuff    
 	      lineNo = 0
 	      changes = "|"
               for i in jrnlWriteBuff:
