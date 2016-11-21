@@ -39,23 +39,24 @@ class EventHandler(pyinotify.ProcessEvent):
 
 
     def process_IN_DELETE(self, event):
-        splits = event.pathname.rsplit('/',2)	
+       	splits = event.pathname.rsplit('/',2)	
 	deletedFileFromTemp = splits[0] + '/temp_cjfs/' + splits[2].strip('~')
-	os.remove(deletedFileFromTemp)
-        print "Deleted-: ", event.pathname, str(datetime.now())#time.asctime( time.localtime(time.time()) )
-        print "Deleted-: ", deletedFileFromTemp, str(datetime.now())#time.asctime( time.localtime(time.time()) )
-	openGlobalRec = open(splits[0] + '/global/globalRecord', "r")
- 	line = openGlobalRec.readline()
-        while line!="": #increment global rec lines
-           #print "NEW LINE"
-           #print line 
-	   globalSplit = line.split(',')
-           #print event.pathname
-           #print globalSplit[0]
-	   if globalSplit[0] == event.pathname:
-	      shutil.move(splits[0]+'/Journal/A-'+globalSplit[1].strip('\n'), splits[0]+'/Journal/A-'+globalSplit[1].strip('\n')+'-'+str(randint(1,10000))+'-deleted')
-              print "Marked: Journal A-" + globalSplit[1].strip('\n') + " as deleted"
- 	   line = openGlobalRec.readline()
+	if deletedFileFromTemp[-4:] != '.swp':
+		os.remove(deletedFileFromTemp)
+		print "Deleted-: ", event.pathname, str(datetime.now())#time.asctime( time.localtime(time.time()) )
+		print "Deleted-: ", deletedFileFromTemp, str(datetime.now())#time.asctime( time.localtime(time.time()) )
+		openGlobalRec = open(splits[0] + '/global/globalRecord', "r")
+	 	line = openGlobalRec.readline()
+		while line!="": #increment global rec lines
+		   #print "NEW LINE"
+		   #print line 
+		   globalSplit = line.split(',')
+		   #print event.pathname
+		   #print globalSplit[0]
+		   if globalSplit[0] == event.pathname:
+		      shutil.move(splits[0]+'/Journal/A-'+globalSplit[1].strip('\n'), splits[0]+'/Journal/A-'+globalSplit[1].strip('\n')+'-'+str(randint(1,10000))+'-deleted')
+		      print "Marked: Journal A-" + globalSplit[1].strip('\n') + " as deleted"
+	 	   line = openGlobalRec.readline()
 
 
     def process_IN_MODIFY(self, event):
@@ -67,6 +68,8 @@ class EventHandler(pyinotify.ProcessEvent):
 	fileNameCheckLen = len(splits[2])	
 	checkGoutput = splits[2].rsplit('-',1)
 	updatedFile = path #splits[0] + '/wf/' + splits[2].strip('~')
+	print "NEW"	
+	print checkGoutput
 	bkupFile = splits[0] + '/temp_cjfs/' + splits[2].strip('~')
         globalRecFile = splits[0] + '/global/globalRecord' # to keep inode filename mapping
 	
@@ -77,13 +80,17 @@ class EventHandler(pyinotify.ProcessEvent):
 	#print inode_id
 	
 	#print checkGoutput
-	if type_of_change == 'Delete-Renamed-' and checkGoutput[0] != '.goutputstream':
+	if checkGoutput[0][-4:] == '.swp' or  checkGoutput[0] == '.goutputstream': # and splits[2][fileNameCheckLen-1] != '~':
+		print("Un-tracked file changed...")
+
+	#elif type_of_change == 'Delete-Renamed-' and checkGoutput[-4:] == '.swp' or  checkGoutput[0] != '.goutputstream':
+	elif type_of_change == 'Delete-Renamed-':
 	   if os.path.isfile(bkupFile):
 	      os.remove(bkupFile)
 	      print ("Removed-:" + bkupFile)	
-
-	#elif splits[2][fileNameCheckLen-1] == '~' or type_of_change == 'Modified-':
-	elif type_of_change == 'Modified-' and checkGoutput[0] != '.goutputstream' and splits[2][fileNameCheckLen-1] != '~':
+	
+	#elif type_of_change == 'Modified-' and checkGoutput[0] != '.goutputstream' or checkGoutput[-4:] != '.swp' and splits[2][fileNameCheckLen-1] != '~':
+	elif type_of_change == 'Modified-':
 	   if os.path.isfile(bkupFile):
 	      #print type_of_change + ": " + path
 	      #print splits[2][fileNameCheckLen-1]
@@ -133,7 +140,8 @@ class EventHandler(pyinotify.ProcessEvent):
 	   else:
 	      print type_of_change + ": Not monitored file " + path
 	            
-	elif type_of_change == 'Created-' and checkGoutput[0] != '.goutputstream' and splits[2][fileNameCheckLen-1] != '~':
+	#elif type_of_change == 'Created-' and checkGoutput[0] != '.goutputstream' or checkGoutput[-4:] != '.swp' and splits[2][fileNameCheckLen-1] != '~':
+	elif type_of_change == 'Created-':
 	      #shutil.copy(path, bkupFile)
 	      open(bkupFile, 'a').close()
 	      print "Created-: New file " + path
@@ -244,9 +252,11 @@ class EventHandler(pyinotify.ProcessEvent):
 	   jrnl.write(lineToBeAdded)
 	   jrnl.close() 
 
+"""
+WRITE TO SHARED MEMORY
            #Write journal to Shared Memory
            #global CURR_CLIENT
-           #subprocess.call([".02dfn/asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
+           #subprocess.call(["./asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
         
         #PUT IN WHILE LOOP
         subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid), "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid)])
@@ -264,6 +274,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	success, err = process.communicate()
 	print "POST MERGE WRITE RETURNED: "
 	print success, err
+"""
 
 def main():
     for arg in sys.argv[1:]:

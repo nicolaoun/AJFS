@@ -25,13 +25,13 @@ for i in {1..2..1} # start 2 clients
      #echo "Copied servers.list to client_0$i/receive/"
 
      python watch_cjfs.py 0$i &
-     echo "Watching client_0$i".adh
+     echo "Watching client_0$i"
 
   done
 
-echo "Starting servers..."
+echo "Not Starting servers..."
 #cd /home/seecs/Documents/AtomicSharedMemory/scripts
-./run_server_ubuntu.sh 10 4000
-echo "Servers started..."
+#./run_server_ubuntu.sh 10 4000
+#echo "Servers started..."
 
 exit 0
