@@ -244,6 +244,9 @@ class EventHandler(pyinotify.ProcessEvent):
 	   jrnl.write(lineToBeAdded)
 	   jrnl.close() 
 
+	   #Placeholder
+	   appendMergeToLocalJrnl(CURR_CLIENT,inodeid)
+
 """
 WRITE TO SHARED MEMORY
            #Write journal to Shared Memory
@@ -268,30 +271,39 @@ WRITE TO SHARED MEMORY
 	print success, err
 """
 
-    def appendToLocalJrnl(CURR_CLIENT_, inodeid_ ): #append new lines from recieved journal to local journal
-	received_jrnl = "client_"+CURR_CLIENT_+"/receive/A-"+str(inodeid_)
+    #APPENDTOJRNL FUNCTION HERE
+    def appendMergeToLocalJrnl(CURR_CLIENT_,inodeid_)
+        received_jrnl = "client_"+CURR_CLIENT_+"/receive/A-"+str(inodeid_)
 	local_jrnl = "client_"+CURR_CLIENT_+"/Journal/A-"+str(inodeid_)
+
 	if os.path.isfile(received_jrnl):
-	      #use difflib here compare the two files
-	      difference = difflib.ndiff(open(received_jrnl).readlines(), open(local_jrnl).readlines())
-	      jrnlChanges = list(difference) #convert all changes to a list
-	      lineNo = 0
-	      changes = "|"
-              for i in jrnlChanges:
-                 print "Changes Before split: "+i
-                 tempLine = i.split(' ')
-                 print "Changes After split: "
-                 print tempLine
-                 """
-		 change_transac = ""
-                 for chunks in range(1,len(tempLine)): # find a better way to do this
-                    change_transac += tempLine[chunks] + " "
-		 change_transac = change_transac[:-1]
-	  	 #print change_transac
-		 if tempLine[0] == '+' or tempLine[0] == '-':
-		    changes = changes + str(lineNo) + chr(168) + tempLine[0] + chr(168) + change_transac.strip('\n') + '|'
-                 lineNo=lineNo+1 #This line no is not going to be written on the Global Record
-		 """
+	   #use difflib here compare the two files
+	   difference = difflib.ndiff(open(local_jrnl).readlines(), open(received_jrnl).readlines())
+	   jrnlChanges = list(difference) #convert all changes to a list
+	   #print jrnlChanges
+	   lineNo = 0
+	   changes = []
+	   for i in jrnlChanges:
+	      #print i
+	      tempLine = i.split('\n')
+	      if tempLine[0][:1] == '+' or tempLine[0][:1] == '-':
+		 changes.append(tempLine[0][2:].strip('\n'))
+		 lineNo = lineNo + 1 
+	   print changes
+	   print lineNo
+	   
+	   
+	   #Append local journal with new lines
+	   jrnl = open("client_"+CURR_CLIENT_+"/Journal/A-"+str(inodeid_), "a")
+	   for i in changes:
+	      jrnl.write(i+'\n')
+	   jrnl.close()
+
+	   lastWrittenToJrnl = integrate.get_global_record("client_"+CURR_CLIENT_+"/global/globalRecord",inodeid_,'get_last_line_written_to_jrnl')
+
+	   #update last line written to journal in global record
+	   #update_global_record(self, global_rec_file,inode_no,line_no,type_of_update)
+	   #update_global_record("client_"+CURR_CLIENT_+"/global/globalRecord",inodeid_,lastWrittenToJrnl+lineNo,'last_line_added')
 
 
 def main():
