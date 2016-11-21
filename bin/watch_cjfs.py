@@ -268,6 +268,32 @@ WRITE TO SHARED MEMORY
 	print success, err
 """
 
+    def appendToLocalJrnl(CURR_CLIENT_, inodeid_ ): #append new lines from recieved journal to local journal
+	received_jrnl = "client_"+CURR_CLIENT_+"/receive/A-"+str(inodeid_)
+	local_jrnl = "client_"+CURR_CLIENT_+"/Journal/A-"+str(inodeid_)
+	if os.path.isfile(received_jrnl):
+	      #use difflib here compare the two files
+	      difference = difflib.ndiff(open(received_jrnl).readlines(), open(local_jrnl).readlines())
+	      jrnlChanges = list(difference) #convert all changes to a list
+	      lineNo = 0
+	      changes = "|"
+              for i in jrnlChanges:
+                 print "Changes Before split: "+i
+                 tempLine = i.split(' ')
+                 print "Changes After split: "
+                 print tempLine
+                 """
+		 change_transac = ""
+                 for chunks in range(1,len(tempLine)): # find a better way to do this
+                    change_transac += tempLine[chunks] + " "
+		 change_transac = change_transac[:-1]
+	  	 #print change_transac
+		 if tempLine[0] == '+' or tempLine[0] == '-':
+		    changes = changes + str(lineNo) + chr(168) + tempLine[0] + chr(168) + change_transac.strip('\n') + '|'
+                 lineNo=lineNo+1 #This line no is not going to be written on the Global Record
+		 """
+
+
 def main():
     for arg in sys.argv[1:]:
         print arg
