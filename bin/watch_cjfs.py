@@ -62,6 +62,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	
 	
     def handle_file_modified(self, path, type_of_change):
+	print("func:handle_file_modified()")
 	splits = path.rsplit('/',2)
 	fileNameCheckLen = len(splits[2])	
 	checkGoutput = splits[2].rsplit('-',1)
@@ -76,17 +77,22 @@ class EventHandler(pyinotify.ProcessEvent):
 	#print inode_id
 	
 	#print checkGoutput
-	if checkGoutput[0][-4:] == '.swp' or  checkGoutput[0] == '.goutputstream': # and splits[2][fileNameCheckLen-1] != '~':
-	   print("-")
+	#if checkGoutput[0][-4:] == '.swp' or  checkGoutput[0] == '.goutputstream': # and splits[2][fileNameCheckLen-1] != '~':
+	#   print("-")
 
-	#elif type_of_change == 'Delete-Renamed-' and checkGoutput[-4:] == '.swp' or  checkGoutput[0] != '.goutputstream':
-	elif type_of_change == 'Delete-Renamed-':
+	if (type_of_change == 'Delete-Renamed-' and
+           checkGoutput[0][-4:] != '.swp' and
+ 	   checkGoutput[0] != '.goutputstream'):
 	   if os.path.isfile(bkupFile):
 	      os.remove(bkupFile)
-	      print ("Removed-:" + bkupFile)	
+	      print ("Removed-:" + bkupFile)
+	   else:
+              print("File not found: " + bkupFile)	
 	
-	#elif type_of_change == 'Modified-' and checkGoutput[0] != '.goutputstream' or checkGoutput[-4:] != '.swp' and splits[2][fileNameCheckLen-1] != '~':
-	elif type_of_change == 'Modified-':
+	elif (type_of_change == 'Modified-' and 
+	     checkGoutput[0] != '.goutputstream' and 
+             checkGoutput[0][-4:] != '.swp' and 
+             splits[2][fileNameCheckLen-1] != '~'):
 	   if os.path.isfile(bkupFile):
 	      #use difflib here compare the two files
 	      difference = difflib.ndiff(open(bkupFile).readlines(), open(updatedFile).readlines())
@@ -132,24 +138,28 @@ class EventHandler(pyinotify.ProcessEvent):
 	   else:
 	      print type_of_change + ": Not monitored file " + path
 	            
-	#elif type_of_change == 'Created-' and checkGoutput[0] != '.goutputstream' or checkGoutput[-4:] != '.swp' and splits[2][fileNameCheckLen-1] != '~':
-	elif type_of_change == 'Created-':
-	      #shutil.copy(path, bkupFile)
-	      open(bkupFile, 'a').close()
-	      print "Created-: New file " + path
-	      print "Created-: Backup Empty file " + bkupFile
-              globalRec = open(globalRecFile,"a")
-	      globalRec.write(path+','+ str(inode_id) + ',0,-1,0\n')
-              globalRec.close()
-      	      print "Global Record Updated..."
+	elif (type_of_change == 'Created-' and
+             checkGoutput[0] != '.goutputstream' and
+             checkGoutput[0][-4:] != '.swp' and
+             splits[2][fileNameCheckLen-1] != '~'):
+	   #shutil.copy(path, bkupFile)
+	   open(bkupFile, 'a').close()
+	   print "Created-: New file " + path
+	   print "Created-: Backup Empty file " + bkupFile
+	   #Create Global Record Entry for First Time
+           globalRec = open(globalRecFile,"a")
+	   globalRec.write(path+','+ str(inode_id) + ',0,-1,0\n')
+           globalRec.close()
+      	   print "Global Record Updated..."
 	else: 
-	      print "Unhandled event..."
-	      #if checkGoutput[0] != '.goutputstream' and splits[2][fileNameCheckLen-1] != '~':
-	      #   shutil.copy(path, bkupFile)
-	      #   print "Backup file " + bkupFile + " updated"
+	   print "Unhandled event..."
+	   #if checkGoutput[0] != '.goutputstream' and splits[2][fileNameCheckLen-1] != '~':
+	   #   shutil.copy(path, bkupFile)
+	   #   print "Backup file " + bkupFile + " updated"
 	
     def update_global_record(self, global_rec_file,inode_no,line_no,type_of_update):
-	print "inode: "+str(inode_no) + "line: " + str(line_no) + "type: " + type_of_update
+	#print "inode: "+str(inode_no) + "line: " + str(line_no) + "type: " + type_of_update
+	print("func:update_global_record()")
         if 1==1:#type_of_update == 'last_line_added':
            tempgRFile = []
            with open(global_rec_file) as fil:
@@ -173,7 +183,7 @@ class EventHandler(pyinotify.ProcessEvent):
                     #globalSplit[3] = str(int(globalSplit[3].strip('\n'))-1)
                     globalSplit[4]= str(int(globalSplit[4])+1)
                  tempgRFile[k] = globalSplit[0]+','+globalSplit[1]+','+globalSplit[2]+','+globalSplit[3]+','+globalSplit[4]
-		 #print tempgFile[k]
+		 print tempgRFile[k]
            #write back to globalRecord file
            updategRec = open(global_rec_file,"w")
            for l in range(0,len(tempgRFile)):
@@ -205,6 +215,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	      jrnl.write(i+'\n')
 	   jrnl.close()
 
+	   self.appendMergeToLocalJrnl(inodeid,globalRecordFile)
 	   """
            #Write journal to Shared Memory
 	   #Before writing to shared memory fetch the latest ver from shared storage
@@ -245,10 +256,10 @@ class EventHandler(pyinotify.ProcessEvent):
 	   jrnl.close() 
 
 	   #Placeholder
-	   appendMergeToLocalJrnl(CURR_CLIENT,inodeid)
+	   
 
-"""
-WRITE TO SHARED MEMORY
+	"""
+	WRITE TO SHARED MEMORY
            #Write journal to Shared Memory
            #global CURR_CLIENT
            #subprocess.call(["./asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
@@ -269,12 +280,13 @@ WRITE TO SHARED MEMORY
 	success, err = process.communicate()
 	print "POST MERGE WRITE RETURNED: "
 	print success, err
-"""
+	"""
 
     #APPENDTOJRNL FUNCTION HERE
-    def appendMergeToLocalJrnl(CURR_CLIENT_,inodeid_)
-        received_jrnl = "client_"+CURR_CLIENT_+"/receive/A-"+str(inodeid_)
-	local_jrnl = "client_"+CURR_CLIENT_+"/Journal/A-"+str(inodeid_)
+    def appendMergeToLocalJrnl(self,inodeid_,globalRecordFile_):
+	global CURR_CLIENT
+        received_jrnl = "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)
+	local_jrnl = "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_)
 
 	if os.path.isfile(received_jrnl):
 	   #use difflib here compare the two files
@@ -294,16 +306,17 @@ WRITE TO SHARED MEMORY
 	   
 	   
 	   #Append local journal with new lines
-	   jrnl = open("client_"+CURR_CLIENT_+"/Journal/A-"+str(inodeid_), "a")
+	   jrnl = open("client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "a")
 	   for i in changes:
 	      jrnl.write(i+'\n')
 	   jrnl.close()
 
-	   lastWrittenToJrnl = integrate.get_global_record("client_"+CURR_CLIENT_+"/global/globalRecord",inodeid_,'get_last_line_written_to_jrnl')
-
+	   lastWrittenToJrnl = integrate.get_global_record(globalRecordFile_,inodeid_,'get_last_line_written_to_jrnl')
+	   print "get last line written: " + str(lastWrittenToJrnl)
 	   #update last line written to journal in global record
 	   #update_global_record(self, global_rec_file,inode_no,line_no,type_of_update)
-	   #update_global_record("client_"+CURR_CLIENT_+"/global/globalRecord",inodeid_,lastWrittenToJrnl+lineNo,'last_line_added')
+	   self.update_global_record(globalRecordFile_,inodeid_,lastWrittenToJrnl+lineNo,'last_line_added')
+
 
 
 def main():
