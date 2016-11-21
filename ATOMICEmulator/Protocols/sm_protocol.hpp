@@ -30,7 +30,6 @@ SOFTWARE.
 #define protocol_h
 #include "sm_node.h"
 #include <vector>
-#include "rapidjson/document.h"
 
 enum object_t
 {
@@ -114,20 +113,31 @@ class Packet : public Serializable{
 
     RWObject obj;       // Object id with value and/or filepath
 
-    Packet(){};
+    Packet(){}
 
     bool operator < (const Packet& pkt1) const
     {
       return ( this->src_ < pkt1.src_);
     }
     
+    virtual void serializeHead(std::ostream& stream)
+    {
+        // Serialization code
+        //JSON: { "Src" : [src_id], "Dest" : [dest_id], "mType" : [msg_type], "ts" : [timestamp], "value" : "[value]"}
+        stream << "{\"Src\":" << src_ <<", \"Dest\" :  "<< dst_ << ", \"mType\" : " << msgType << ", \"Counter\" : "  << counter;
+    }
+
     virtual void serialize(std::ostream& stream)
     {
         Tag tag = obj.get_tag();
 
         // Serialization code
-        stream << src_ <<" "<< dst_ << " " << msgType << " "  << counter << " ";
-        stream  << obj.objID_ << " " << obj.get_type() << " " << tag.ts << " " << tag.wid << " " << obj.get_value();
+        //JSON: { "Src" : [src_id], "Dest" : [dest_id], "mType" : [msg_type], "ts" : [timestamp], "value" : "[value]"}
+        serializeHead(stream);
+        stream  << ", \"oID\" : \"" << obj.objID_ << "\"";
+        stream << ", \"oType\" : " << obj.get_type();
+        stream << ", \"Ts\" : " << tag.ts << ", \"Wid\" : " << tag.wid;
+        stream << ", \"Value\" : \"" << obj.get_value() <<"\"}";
     }
     
     virtual void deserialize(std::istream& stream)
@@ -143,6 +153,41 @@ class Packet : public Serializable{
         obj.set_value(val);
         obj.set_type((object_t) oType);
     }
+
+    virtual void deserializeHead(std::string jsonstr)
+    {
+        Tag tag;
+        rapidjson::Document jsonDoc;
+
+        //parse JSON
+        jsonDoc.Parse(jsonstr.c_str());
+
+        src_ = jsonDoc["Src"].GetInt();
+        dst_ = jsonDoc["Dest"].GetInt();
+        msgType = jsonDoc["mType"].GetInt();
+        counter = jsonDoc["Counter"].GetInt();
+    }
+
+    virtual void deserialize(std::string jsonstr)
+    {
+        Tag tag;
+        rapidjson::Document jsonDoc;
+
+        //parse JSON
+        jsonDoc.Parse(jsonstr.c_str());
+
+        src_ = jsonDoc["Src"].GetInt();
+        dst_ = jsonDoc["Dest"].GetInt();
+        msgType = jsonDoc["mType"].GetInt();
+        counter = jsonDoc["Counter"].GetInt();
+        obj.objID_ = jsonDoc["oID"].GetString();
+        obj.set_type( (object_t) jsonDoc["oType"].GetInt());
+        tag.ts = jsonDoc["Ts"].GetInt();
+        tag.wid = jsonDoc["Wid"].GetInt();
+        obj.set_tag(tag);
+        obj.set_value(jsonDoc["Value"].GetString());
+    }
+
 };
 
 #endif /* protocol_h */

@@ -70,6 +70,13 @@ int main(int argc, char** argv)
                 std::cout << "*********************************************************\n\n";
                 std::cout << "Root Dir:" << args.path << "\n";
                 cchybrid_client = new CCHybridClient(args.nodeid, client_type, args.path);
+
+                //set the number of failures
+                if(args.crashes > 0)
+                {
+                    cchybrid_client->set_failures(args.crashes);
+                }
+
                 handle_client<CCHybridClient>(cchybrid_client, args);
                 break;
             default:
@@ -122,15 +129,22 @@ void handle_client(ProtoType* client, Arguments args)
 {
     object_t o_type;
     double frequency;
+     int val = 0;
     int ops = 10;
 
     int client_type = (args.type == "read")? READER : WRITER;
 
     //check the type of the object
     if( args.value == "" )
+    {
         o_type = FILE_T;
+        std::cout << "oType: FILE";
+    }
     else
+    {
         o_type = VALUE_T;
+        std::cout << "oType: VALUE";
+    }
 
 
     client->set_debug_lvl(args.debuglvl);
@@ -157,13 +171,13 @@ void handle_client(ProtoType* client, Arguments args)
                 client->invoke_op(args.objid, o_type, args.value);
                 break;
 
-            // perform multiple opearions in a specified frequency
+            // perform multiple operations in a specified frequency
             case 2:
                 std::cout << "\nEnter "<< args.type <<" frequency (in seconds): ";
                 std::cin >> frequency;
                 while(ops > 0)
                 {
-                    client->invoke_op(args.objid, o_type, args.value);
+                    client->invoke_op(args.objid, o_type, std::to_string(val));
                     int timeout = (rand()%((int) frequency));
 
                     std::cout << "\n\n****************\nNext operation in " << timeout << " sec...\n****************\n\n";
@@ -174,6 +188,7 @@ void handle_client(ProtoType* client, Arguments args)
                         sleep(timeout);
 
                     ops --;
+                    val++;
                 }
                 break;
 
@@ -188,8 +203,36 @@ void handle_client(ProtoType* client, Arguments args)
     }
     else //just invoke a single operation
     {
-        client->invoke_op(args.objid, o_type, args.value);
-        exit(EXIT_SUCCESS);
+        if ( args.menu == "auto" )
+        {
+            // set the frequency between 3-10
+            frequency = (rand()%7)+3;
+
+            while(ops > 0)
+            {
+                // timeout between 2 - frequency secs
+                int timeout = (rand()%((int) frequency))+2;
+
+                client->invoke_op(args.objid, o_type, std::to_string(val));
+
+                std::cout << "\n\n****************\nNext operation in " << timeout << " sec...\n****************\n\n";
+
+                if(timeout < MIN_TIMEOUT)
+                    sleep(MIN_TIMEOUT);
+                else
+                    sleep(timeout);
+
+                ops --;
+                val++;
+            }
+
+            client->terminate();
+        }
+        else
+        {
+            client->invoke_op(args.objid, o_type, args.value);
+            exit(EXIT_SUCCESS);
+        }
     }
 }
 

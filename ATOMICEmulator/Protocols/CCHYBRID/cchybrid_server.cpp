@@ -38,7 +38,7 @@ CCHybridServer::CCHybridServer(int serverID, int port) {
     
     setup_dirs(srv_root_dir_);
     
-    DEBUGING(4,"Initialized on Port:%d\n",
+    DEBUGING(4,"Initialized on Port:%d",
              port_);
     
     serve_clients_.clear();   
@@ -70,7 +70,7 @@ void CCHybridServer::setup_dirs(std::string root_dir)
         sprintf(log_fname, "/c%d",nodeID);
         logs_dir_ += log_fname;
         init_logfile(logs_dir_);
-        DEBUGING(6, "Loaded Directories...\n");
+        DEBUGING(6, "Loaded Directories...");
 
 }
 
@@ -80,7 +80,7 @@ void CCHybridServer::start(){
     int ready;
     smNode *tmp_client;
     
-    DEBUGING(4, "Starting server %d\n", nodeID);
+    DEBUGING(4, "Starting server %d", nodeID);
     
     timeout.tv_sec=1;
     timeout.tv_usec=0;
@@ -97,7 +97,7 @@ void CCHybridServer::start(){
     /* Listen for connections */
     listenSocket();
     
-    DEBUGING(4, "Listening for connections to port %d...\n", port_);
+    DEBUGING(4, "Listening for connections to port %d...", port_);
     
     while(1) {
         
@@ -153,7 +153,7 @@ void CCHybridServer::acceptClientConnection()
     clientptr = (struct sockaddr *) &client;
     clientlen = sizeof(client);
     
-    DEBUGING(4, "Accepting connections on port %d\n", port_);
+    DEBUGING(4, "Accepting connections on port %d", port_);
     
     /* Accept connection */
     if ((newsock_ = accept(sock_, clientptr, (socklen_t *) &clientlen)) < 0) {
@@ -185,7 +185,7 @@ void CCHybridServer::acceptClientConnection()
         strcpy(tmp_client->hostname, rem->h_name);
         strcpy(tmp_client->ip_addr, rem->h_addr);
         
-        DEBUGING(4, "Accepted connection from %s (IP:%s)\n",
+        DEBUGING(4, "Accepted connection from %s (IP:%s)",
                  tmp_client->hostname,
                  tmp_client->ip_addr);
     }
@@ -194,55 +194,54 @@ void CCHybridServer::acceptClientConnection()
     try {
         threads.push_back(std::thread(&CCHybridServer::serve_client, this, tmp_client));
     } catch (int err) {
-        REPORTERROR("An exception occured while creating the thread. Err No:%d\n",  err);
+        REPORTERROR("An exception occured while creating the thread. Err No:%d",  err);
     }
 }
 
 
 void CCHybridServer::serve_client(smNode *tmp_client)
 {
-    Packet p;
+    CCHybridPacket p;
     std::string type_str;
-    CCHybridReplica *local_replica;
+    CCHybridObject *local_replica;
     std::vector<smNode>::iterator it;
     int msg_type = READ;
     
     while (msg_type != TERMINATE) {
         
         try {
-            if( !rcv_pkt<Packet>(tmp_client->sock, &p) )         // receive a packet from the client
+            if( !rcv_pkt<CCHybridPacket>(tmp_client->sock, &p) )         // receive a packet from the client
             {
-                REPORTERROR("Failed receiving packet!\n");
+                REPORTERROR("Failed receiving packet!");
                 return;
             }
             
             tmp_client->nodeID = p.src_;
             
-            DEBUGING(2, "Received msg: ClientID = %d, Socket = %d...\n", tmp_client->nodeID, tmp_client->sock);
+            DEBUGING(2, "Received msg: ClientID = %d, Socket = %d...", tmp_client->nodeID, tmp_client->sock);
             
             msg_type = p.msgType;
             
-            switch (msg_type) {
-                case READ:
-                case WRITE:
-                    type_str = (p.msgType == READ)? "READ" : "WRITE";
-                    
-                    //find the requested object in the local set of replicas
-                    local_replica = get_local_replica(p.obj);
-                    
-                    std::cout << "\n********************************************************\n";
-                    DEBUGING(6,"%s msg from %d, Object ID: %s, Tag Rcvd: <%d,%d>, Local Tag: <%d, %d>\n",
-                             type_str.c_str(),
-                             p.src_,
-                             p.obj.get_id().c_str(),
-                             p.obj.get_tag().ts, p.obj.get_tag().wid,
-                             local_replica->tg_.ts, local_replica->tg_.wid
-                             );
-                    std::cout << "---------------------------------------------------------\n";
-                    
-                    
-                    // if it is a write msg -> receive the file
-                    /*
+            if(msg_type == READ || msg_type == WRITE || msg_type == INFORM)
+            {
+                type_str = (p.msgType == READ)? "READ" : ( (p.msgType == WRITE) ? "WRITE" : "INFORM" );
+
+                //find the requested object in the local set of replicas
+                local_replica = get_local_replica(p.obj);
+
+                DEBUGING(6,"\n********************************************************");
+                DEBUGING(6,"%s msg from %d, Object ID: %s, Tag Rcvd: <%d,%d>, Local Tag: <%d, %d>",
+                         type_str.c_str(),
+                         p.src_,
+                         p.obj.get_id().c_str(),
+                         p.obj.get_tag().ts, p.obj.get_tag().wid,
+                         local_replica->tg_.ts, local_replica->tg_.wid
+                         );
+                DEBUGING(6,"---------------------------------------------------------");
+
+
+                // if it is a write msg -> receive the file
+                /*
                     if ( msg_type == WRITE)
                     {
                         char fpath[100];
@@ -256,25 +255,25 @@ void CCHybridServer::serve_client(smNode *tmp_client)
                             return;    // receive the object's file from the client
                     }
                     */
-                    
-                    mtx.lock();
-                    serve(&p, tmp_client, local_replica);
-                    mtx.unlock();
-                    break;
-                case TERMINATE:
-                default:
-                    DEBUGING(2,"Closing connection with %d...\n",
-                             p.src_);
-                    
-                    close(tmp_client->sock);                        // Close socket
-                    it = std::find(serve_clients_.begin(), serve_clients_.end(), *tmp_client);
-                    if (it != serve_clients_.end())
-                    {
-                        serve_clients_.erase(it); // Erase from the list of clients
-                    }
-                    break;
+
+                mtx.lock();
+                serve(&p, tmp_client, local_replica);
+                mtx.unlock();
             }
-        } catch (int err) {
+            else
+            {
+                DEBUGING(2,"Closing connection with %d...",
+                         p.src_);
+
+                close(tmp_client->sock);                        // Close socket
+                it = std::find(serve_clients_.begin(), serve_clients_.end(), *tmp_client);
+                if (it != serve_clients_.end())
+                {
+                    serve_clients_.erase(it); // Erase from the list of clients
+                }
+            }
+        } catch (int err)
+        {
             REPORTERROR("Error while serving the client. Err No: %d", err);
             close(tmp_client->sock);
         }
@@ -283,13 +282,13 @@ void CCHybridServer::serve_client(smNode *tmp_client)
 }
 
 //Method to search for an object in the set of replicas and return that object if found
-CCHybridReplica* CCHybridServer::get_local_replica(RWObject obj)
+CCHybridObject* CCHybridServer::get_local_replica(CCHybridObject obj)
 {   
     // if the object is not found -> initialize the object with default values
     if( local_objects_.find(obj.objID_) == local_objects_.end() )
     {
         // Create an object of the same type
-        CCHybridReplica temp_obj(obj.get_id(), obj.get_type(), meta_dir_);
+        CCHybridObject temp_obj(obj.get_id(), obj.get_type(), meta_dir_);
         
         //oit = objects_set.insert(oit, temp_obj);
         local_objects_[obj.objID_] = temp_obj;
@@ -299,7 +298,7 @@ CCHybridReplica* CCHybridServer::get_local_replica(RWObject obj)
     return &local_objects_[obj.objID_];
 }
 
-void CCHybridServer::serve(Packet *pkt, smNode *c, CCHybridReplica *replica)
+void CCHybridServer::serve(CCHybridPacket *pkt, smNode *c, CCHybridObject *replica)
 {
     int pid = pkt->src_;
     CCHybridPacket h_pkt;
@@ -343,12 +342,15 @@ void CCHybridServer::serve(Packet *pkt, smNode *c, CCHybridReplica *replica)
             // reset the seen set
             replica->seen_.clear();
 
-            //resete propagation flag
+            //reset propagation flag
             replica->propagated_tg_ = 0;
         }
 
         // insert node in the seen set
         replica->seen_.insert(*c);
+        replica->views_ = replica->seen_.size();
+
+        DEBUGING(2, "Seen set size: %d", replica->seen_.size());
 
         // changed the propagation flag if coming from reader
         if ( pkt->obj.tg_ == replica->tg_ && pkt->msgType == INFORM)
@@ -356,7 +358,7 @@ void CCHybridServer::serve(Packet *pkt, smNode *c, CCHybridReplica *replica)
             replica->propagated_tg_ = 1;
         }
 
-        
+        std::string ackstr;
         // Send the appropriate reply
         switch(pkt->msgType){
             case READ:
@@ -369,11 +371,8 @@ void CCHybridServer::serve(Packet *pkt, smNode *c, CCHybridReplica *replica)
                 // if we failed to send the file -> exit the thread
                 //if ( !send_file(c->sock, (char*) to.c_str()) ) exit(EXIT_FAILURE);
                 
-                DEBUGING(4,"READACK to %d, rcvTag=<%d,%d>, sendTag=<%d,%d>\n",
-                         pkt->src_,
-                         pkt->obj.get_tag().ts, pkt->obj.get_tag().wid,
-                         replica->tg_.ts, replica->tg_.wid);
-                std::cout << "********************************************************\n";
+                ackstr = "READACK";
+
                 break;
             case WRITE:
 
@@ -382,20 +381,32 @@ void CCHybridServer::serve(Packet *pkt, smNode *c, CCHybridReplica *replica)
                 // if we failed to send the file -> exit the thread
                 if ( !send_pkt<CCHybridPacket>(c->sock, &h_pkt) ) exit(EXIT_FAILURE);
                 
-                DEBUGING(4,"WRITEACK from %d, rcvTag=<%d,%d>, sendTag=<%d,%d>\n",
-                         pkt->src_,
-                         pkt->obj.get_tag().ts, pkt->obj.get_tag().wid,
-                         replica->tg_.ts, replica->tg_.wid);
-                std::cout << "********************************************************\n";
+                ackstr = "WRITEACK";
                 break;
+        case INFORM:
+
+            h_pkt = prepare_pkt(c, INFORMACK, *replica);                  // send a WRITEACK to client c
+
+            // if we failed to send the file -> exit the thread
+            if ( !send_pkt<CCHybridPacket>(c->sock, &h_pkt) ) exit(EXIT_FAILURE);
+
+            ackstr = "INFORMACK";
+            break;
         }
+
+        DEBUGING(4,"%s to %d, rcvTag=<%d,%d>, sendTag=<%d,%d>",
+                 ackstr.c_str(),
+                 pkt->src_,
+                 pkt->obj.get_tag().ts, pkt->obj.get_tag().wid,
+                 replica->tg_.ts, replica->tg_.wid);
+        DEBUGING(6,"********************************************************");
 
         // update replica's local metadata
         replica->save_metadata();
         
     }
     else{
-        DEBUGING(2,"Discarding pkt from %d, pktCounter:%d, srvCounter:%d\n",
+        DEBUGING(2,"Discarding pkt from %d, pktCounter:%d, srvCounter:%d",
                  pkt->src_,
                  pkt->counter,
                  c->req_counter_);
@@ -403,7 +414,7 @@ void CCHybridServer::serve(Packet *pkt, smNode *c, CCHybridReplica *replica)
     }
 }
 
-CCHybridPacket CCHybridServer::prepare_pkt(smNode *dest, int msgType, CCHybridReplica obj){
+CCHybridPacket CCHybridServer::prepare_pkt(smNode *dest, int msgType, CCHybridObject obj){
     
     CCHybridPacket p;
     std::set<Tag>::iterator it;
@@ -416,15 +427,14 @@ CCHybridPacket CCHybridServer::prepare_pkt(smNode *dest, int msgType, CCHybridRe
     p.msgType = msgType;
     p.counter = dest->req_counter_;
     p.obj = obj;
-    p.views_ = obj.seen_.size();
-    p.tg_propagated_ = obj.propagated_tg_;
 
-    DEBUGING(2,"Prepared packet to PID:%d, Type:%d, Tag:<%d,%d,%d>, Counter:%d Object:%s\n",
+    DEBUGING(2,"Prepared packet to PID:%d, Type:%d, Tag:<%d,%d,%d>, Counter:%d Object:%s Views:%d Propagated:%d",
              p.dst_,
              p.msgType,
              p.obj.get_tag().ts,p.obj.get_tag().wid,p.obj.get_tag().wc,
              p.counter,
-             p.obj.get_id().c_str());
+             p.obj.get_id().c_str(),
+             p.obj.views_, p.obj.propagated_tg_);
 
     return p;
     

@@ -56,7 +56,7 @@ ABDClient::ABDClient(int id, int role, std::string opath, std::string sfile) {
     //read the servers
     parse_hosts(sfile.c_str());
     
-    DEBUGING(4,"Initialized, Server file: %s\n",
+    DEBUGING(4,"Initialized, Server file: %s",
              sfile.c_str());
 }
 
@@ -86,7 +86,7 @@ void ABDClient::setup_dirs(std::string root_dir)
     sprintf(log_fname, "/c%d",nodeID);
     logs_dir_ += log_fname;
     init_logfile(logs_dir_);
-    DEBUGING(6, "Loaded Directories...\n");
+    DEBUGING(6, "Loaded Directories...");
 }
 
 /************************************************
@@ -146,7 +146,7 @@ void ABDClient::send_to_all(int m_type){
     // check if we have not reached the majority => exit
     if((int) servers_sent_.size() <= S_/2)
     {
-        REPORTERROR("Too few servers received msg while sending to all.\n");
+        REPORTERROR("Too few servers received msg while sending to all.");
         close_connections();
         exit(1);
     }
@@ -160,7 +160,7 @@ void ABDClient::send_to_server(smNode s, int m_type)
     p = prepare_pkt(req_counter_, s, m_type);
 
     Tag tg = p.obj.get_tag();
-    DEBUGING(2,"Sending packet to PID:%d, Type:%d, Object:%s, Tag:<%d,%d,%d>, Counter:%d\n",
+    DEBUGING(2,"Sending packet to PID:%d, Type:%d, Object:%s, Tag:<%d,%d,%d>, Counter:%d",
              p.dst_,
              p.msgType,
              p.obj.get_id().c_str(),
@@ -216,7 +216,7 @@ void ABDClient::rcv_from_quorum(){
         // wait until something happens
         ready=select(FD_SETSIZE, &readfds, NULL, NULL, &sel_timeout);
         
-        DEBUGING(2, "There are %d fds ready to be read....\n",ready);
+        DEBUGING(2, "There are %d fds ready to be read....",ready);
         
         if (ready < 0) {
             REPORTERROR("Select");
@@ -228,17 +228,17 @@ void ABDClient::rcv_from_quorum(){
             servers_pending_=servers_sent_;
             
             for (it=servers_sent_.begin(); it!=servers_sent_.end(); it++) {
-                DEBUGING(2, "Trying sock:%d....\n",
+                DEBUGING(2, "Trying sock:%d....",
                          (*it).sock);
                 
                 if (FD_ISSET((*it).sock, &readfds)) {
-                    DEBUGING(1,"Receiving packet at address:0x%x\n",&p);
+                    DEBUGING(1,"Receiving packet at address:0x%x",&p);
                     
                     // receive the packet
                     if ( rcv_pkt<Packet>((*it).sock, &p) )
                     {
                         
-                        DEBUGING(3,"Received packet from S:%d, Type:%d, Tag:<%d,%d,%d>, Object: <%s, %s, %s>, Counter:%d\n",
+                        DEBUGING(3,"Received packet from S:%d, Type:%d, Tag:<%d,%d,%d>, Object: <%s, %s, %s>, Counter:%d",
                                  p.src_,
                                  p.msgType,
                                  p.obj.get_tag().ts,p.obj.get_tag().wid,p.obj.get_tag().wc,
@@ -246,7 +246,7 @@ void ABDClient::rcv_from_quorum(){
                                  p.obj.get_path().c_str(),
                                  p.obj.get_value().c_str(),
                                  p.counter);
-                        
+
                         if ( (p.msgType == READACK || p.msgType == WRITEACK)  && p.counter==req_counter_ )
                         {
                             // receive the file during the query phase (PHASE 1)
@@ -286,7 +286,7 @@ void ABDClient::rcv_from_quorum(){
                                 case READACK:
                                 case WRITEACK:
                                 case COUNTER_ERROR:
-                                    DEBUGING(4, "Counter-Error with Server %d (%s) on socket %d: LC=%d, SC=%d ...\n",
+                                    DEBUGING(4, "Counter-Error with Server %d (%s) on socket %d: LC=%d, SC=%d ...",
                                              (*it).nodeID,
                                              (*it).hostname,
                                              (*it).sock,
@@ -295,7 +295,7 @@ void ABDClient::rcv_from_quorum(){
                                     break;
                                     
                                 default:
-                                    DEBUGING(4, "Unknown-Error with Server %d (%s) on socket %d: Packet details: type %d, counter %d, tag <%d,%d,%d>...\n",
+                                    DEBUGING(4, "Unknown-Error with Server %d (%s) on socket %d: Packet details: type %d, counter %d, tag <%d,%d,%d>...",
                                              (*it).nodeID,
                                              (*it).hostname,
                                              (*it).sock,
@@ -329,7 +329,7 @@ void ABDClient::rcv_from_quorum(){
     
     // if only a minority replied -> exit
     if (servers_replied_.size() <= S_ / 2) {
-        DEBUGING(4, "Exiting due to many Server errors...\n");
+        DEBUGING(4, "Exiting due to many Server errors...");
         exit(1);
     }
     
@@ -375,15 +375,22 @@ void ABDClient::invoke_op(std::string objID, object_t objType, std::string value
     RWObject temp_obj(objID, objType, meta_dir_);
     temp_obj.set_path(client_root_dir_);
     temp_obj.set_value(value);
+    temp_obj.set_type(objType);
+
+    if(temp_obj.get_type() == FILE_T)
+        DEBUGING(1, "Temp Object type: FILE");
+
+    if(temp_obj.get_type() == VALUE_T)
+        DEBUGING(1, "Temp Object type: VALUE");
 
     std::vector<RWObject>::iterator oit = std::find(objects.begin(), objects.end(), temp_obj);
 
     if ( oit != objects.end() ) {
-        DEBUGING(3,"Object %d already in the std::set.\n");//, oit->get_id());
+        DEBUGING(3,"Object %d already in the std::set.");//, oit->get_id());
     }
     else
     {
-        DEBUGING(3,"Inserting object %d in the std::set.\n");//, oit->get_id());
+        DEBUGING(3,"Inserting object %d in the std::set.");//, oit->get_id());
         oit = objects.insert(oit, temp_obj);
     }
 
@@ -398,23 +405,23 @@ void ABDClient::invoke_op(std::string objID, object_t objType, std::string value
 
     if ( role_ == READER ) {
         num_reads_++;
-        std::cout << "***************************************\n";
-        DEBUGING(6,"Invoking read %d on object %s at %s \n",
+        DEBUGING(6, "***************************************");
+        DEBUGING(6,"Invoking read %d on object %s at %s ",
                  num_reads_,
                  obj->get_id().c_str(),
                  get_datetime_str().c_str()
                  );
-        std::cout << "***************************************\n";
+        DEBUGING(6, "***************************************");
     }
     else
     {
         num_writes_++;
-        std::cout << "***************************************\n";
-        DEBUGING(6,"Invoking write %d on object %s at %s \n",
+        DEBUGING(6, "***************************************");
+        DEBUGING(6,"Invoking write %d on object %s at %s ",
                  num_writes_,
                  obj->get_id().c_str(),
                  get_datetime_str().c_str());
-        std::cout << "***************************************\n";
+        DEBUGING(6, "***************************************");
     }
 
     num_msgs_ = 0;
@@ -426,7 +433,7 @@ void ABDClient::invoke_op(std::string objID, object_t objType, std::string value
     // END PHASE1
 
     //PHASE2
-    DEBUGING(2, "Performing phase2...\n");
+    DEBUGING(2, "Performing phase2...");
     rounds="TWO";
 
     num_two_comm_++;
@@ -441,17 +448,17 @@ void ABDClient::invoke_op(std::string objID, object_t objType, std::string value
 
     totTime+=endTime-startTime;
 
-    std::cout << "\n\n**************************************************\n";
-    DEBUGING(6, "Read#:%d, Duration:%f, Rounds:%s, Tag:<%d,%d,%d>, Object: %s!!\n",
+    DEBUGING(6,"\n\n**************************************************");
+    DEBUGING(6, "Read#:%d, Duration:%f, Rounds:%s, Tag:<%d,%d,%d>, Object: %s!!",
              num_reads_,
              endTime-startTime,
              rounds.c_str(),
              obj->tg_.ts,obj->tg_.wid,obj->tg_.wc,
              obj->get_id().c_str());
-    std::cout << "******************************************************\n\n";
+    DEBUGING(6,"******************************************************");
 
     //disconnect from the hosts
-    DEBUGING(6, "Closing connections...\n");
+    DEBUGING(6, "Closing connections...");
     close_connections();
 
 }
@@ -470,7 +477,7 @@ void ABDClient::process_replies()
     std::string dest_file = sstm.str();     // local file
    
     
-    DEBUGING(3,"ABD: WRITE Comparing - Local Tag:<%d,%d> vs Max Tag <%d,%d>\n",
+    DEBUGING(3,"ABD: WRITE Comparing - Local Tag:<%d,%d> vs Max Tag <%d,%d>",
              obj->tg_.ts,
              obj->tg_.wid,
              maxTag.ts,
@@ -487,13 +494,13 @@ void ABDClient::process_replies()
         obj->set_latest_tag(maxTag);
         commit_flag_ = true;
         
-        std::cout << "\n\n***************************************************\n";
-        DEBUGING(6,"ABD: WRITE SUCCEEDED -> Writing New Tag:<%d,%d,%d> \n",
+        DEBUGING(6, "\n\n***************************************************");
+        DEBUGING(6,"ABD: WRITE SUCCEEDED -> Writing New Tag:<%d,%d,%d> ",
                  maxTag.ts,
                  maxTag.wid,
                  maxTag.wc
                  );
-        std::cout << "***************************************************\n";
+        DEBUGING(6, "***************************************************");
         
     }
     else
@@ -515,23 +522,23 @@ void ABDClient::process_replies()
             // copy the file to the local directory
             if (directoryExists(src_file)){
                 copyFile(src_file, dest_file);
-                DEBUGING(2, "Copied file '%s' successfully\n", dest_file.c_str());
+                DEBUGING(2, "Copied file '%s' successfully", dest_file.c_str());
             }
             else
             {
-                REPORTERROR("Directory does not exist: %s\n",src_file.c_str());
+                REPORTERROR("Directory does not exist: %s",src_file.c_str());
             }
         }
         
-        std::cout << "\n\n***************************************\n";
-        DEBUGING(6,"ABD: Propagating Tag:<%d,%d,%d> \n",
+       DEBUGING(6, "\n\n***************************************");
+        DEBUGING(6,"ABD: Propagating Tag:<%d,%d,%d> ",
                  maxTag.ts,
                  maxTag.wid,
                  maxTag.wc
                  //src.rdbuf()
                  //maxValue.c_str()
                  );
-        std::cout << "***************************************\n";
+       DEBUGING(6, "***************************************");
     }
     
     mode_ = PHASE2;
@@ -553,7 +560,7 @@ Tag ABDClient::find_max_tag()
     //
     for(pit=pkts_rcved_.begin(); pit!=pkts_rcved_.end(); pit++){
         
-        DEBUGING(3,"Checking Msg Sid:%d Tag:<%d,%d,%d>\n",
+        DEBUGING(3,"Checking Msg Sid:%d Tag:<%d,%d,%d>",
                  pit->src_,
                  pit->obj.tg_.ts,
                  pit->obj.tg_.wid,
@@ -574,7 +581,7 @@ void ABDClient::stop(){
     switch(role_){
         case WRITER:
             //send_timer_.force_cancel();
-            DEBUGING(7,"(writes: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED\n",
+            DEBUGING(7,"(writes: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED",
                      num_writes_,
                      num_one_comm_,
                      num_two_comm_,
@@ -582,7 +589,7 @@ void ABDClient::stop(){
             break;
         case READER:
             //send_timer_.force_cancel();
-            DEBUGING(7,"(reads: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED\n",
+            DEBUGING(7,"(reads: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED",
                      num_reads_,
                      num_one_comm_,
                      num_two_comm_,
@@ -612,7 +619,7 @@ void ABDClient::terminate(){
     switch(role_){
         case WRITER:
             //send_timer_.force_cancel();
-            DEBUGING(7,"(writes: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED\n",
+            DEBUGING(7,"(writes: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED",
                      num_writes_,
                      num_one_comm_,
                      num_two_comm_,
@@ -620,7 +627,7 @@ void ABDClient::terminate(){
             break;
         case READER:
             //send_timer_.force_cancel();
-            DEBUGING(7,"(reads: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED\n",
+            DEBUGING(7,"(reads: %d, ONECOMM: %d, TWOCOMM: %d, AVETIME: %.4lf) -- TERMINATED",
                      num_reads_,
                      num_one_comm_,
                      num_two_comm_,
@@ -629,9 +636,9 @@ void ABDClient::terminate(){
         /*
         case SERVER:
             if(crashed_)
-                DEBUGING(7,"crashed at %f -- TERMINATED\n", crashTime);
+                DEBUGING(7,"crashed at %f -- TERMINATED", crashTime);
             else
-                DEBUGING(7,"terminates -- TERMINATED\n");
+                DEBUGING(7,"terminates -- TERMINATED");
             break;
             */
     }
