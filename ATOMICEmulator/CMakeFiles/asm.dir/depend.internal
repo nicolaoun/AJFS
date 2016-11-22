@@ -29,7 +29,6 @@ CMakeFiles/asm.dir/Protocols/ABD/abd_client.cpp.o
  Utilities/set_operations.hpp
  Utilities/sm_common.h
  Utilities/sm_node.h
- Utilities/zhelpers.hpp
 CMakeFiles/asm.dir/Protocols/ABD/abd_server.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/ABD/abd_server.cpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/ABD/abd_server.hpp
@@ -58,7 +57,6 @@ CMakeFiles/asm.dir/Protocols/ABD/abd_server.cpp.o
  Utilities/set_operations.hpp
  Utilities/sm_common.h
  Utilities/sm_node.h
- Utilities/zhelpers.hpp
 CMakeFiles/asm.dir/Protocols/CCHYBRID/cchybrid_client.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/CCHYBRID/cchybrid_client.cpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/CCHYBRID/cchybrid_client.hpp
@@ -88,7 +86,6 @@ CMakeFiles/asm.dir/Protocols/CCHYBRID/cchybrid_client.cpp.o
  Utilities/set_operations.hpp
  Utilities/sm_common.h
  Utilities/sm_node.h
- Utilities/zhelpers.hpp
 CMakeFiles/asm.dir/Protocols/CCHYBRID/cchybrid_server.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/CCHYBRID/cchybrid_protocol.hpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/CCHYBRID/cchybrid_server.cpp
@@ -118,7 +115,6 @@ CMakeFiles/asm.dir/Protocols/CCHYBRID/cchybrid_server.cpp.o
  Utilities/set_operations.hpp
  Utilities/sm_common.h
  Utilities/sm_node.h
- Utilities/zhelpers.hpp
 CMakeFiles/asm.dir/Protocols/sm_protocol.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/sm_protocol.cpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Protocols/sm_protocol.hpp
@@ -146,7 +142,6 @@ CMakeFiles/asm.dir/Protocols/sm_protocol.cpp.o
  Utilities/set_operations.hpp
  Utilities/sm_common.h
  Utilities/sm_node.h
- Utilities/zhelpers.hpp
 CMakeFiles/asm.dir/Utilities/arguments.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/arguments.cpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/arguments.h
@@ -159,14 +154,34 @@ CMakeFiles/asm.dir/Utilities/set_operations.cpp.o
 CMakeFiles/asm.dir/Utilities/sm_common.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/sm_common.cpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/sm_common.h
- /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/zhelpers.hpp
 CMakeFiles/asm.dir/Utilities/sm_node.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/filesystem.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/allocators.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/document.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/encodedstream.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/encodings.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/error/error.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/biginteger.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/diyfp.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/ieee754.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/meta.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/pow10.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/stack.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/strfunc.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/strtod.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/internal/swap.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/memorystream.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/msinttypes/inttypes.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/msinttypes/stdint.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/rapidjson.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/reader.h
+ /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/rapidjson/stream.h
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/set_operations.hpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/sm_common.h
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/sm_node.cpp
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/sm_node.h
- /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/Utilities/zhelpers.hpp
+ Utilities/rapidjson/error/error.h
+ Utilities/rapidjson/reader.h
 CMakeFiles/asm.dir/main.cpp.o
  /Users/nicolasnicolaou/Documents/workspace/ATOMICEmulator/main.cpp
  Protocols/ABD/abd_client.hpp
@@ -200,4 +215,3 @@ CMakeFiles/asm.dir/main.cpp.o
  Utilities/set_operations.hpp
  Utilities/sm_common.h
  Utilities/sm_node.h
- Utilities/zhelpers.hpp

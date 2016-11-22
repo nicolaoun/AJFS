@@ -54,8 +54,8 @@ protected:
 		int max_server_id;
         int failures_;                      // number of maximum server failures
     
-        std::unordered_map<std::string, RWObject> objects;
-		RWObject   *obj;
+        std::unordered_map<std::string, CCHybridObject> objects;
+        CCHybridObject   *obj;
 
         // Protocol variables
         Tag max_tag_;                         // maximum tag discovered during a read round
@@ -77,14 +77,14 @@ protected:
 
         //Protocol specific procedures
         //int is_quorum_complete();
-        void invoke_read();
+        int invoke_read();
         void invoke_write(std::string v);
 		void process_replies();
         Tag find_max_params();
         bool is_predicate_valid();
     
         // Communication procedures
-        Packet prepare_pkt(int, smNode s, int);
+        CCHybridPacket prepare_pkt(int, smNode s, int);
 		void send_to_all(int);
         bool send_to_server(smNode s, int m_type);
         void rcv_from_quorum(int min);

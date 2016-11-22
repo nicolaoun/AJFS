@@ -38,5 +38,5 @@ include_directories(/usr/local/lib)
 
 add_executable(asm ${SOURCE_FILES})
 
-FIND_LIBRARY(ZMQ_LIB zmq-static)
-TARGET_LINK_LIBRARIES(asm ${ZMQ_LIB})
+#FIND_LIBRARY(ZMQ_LIB zmq-static)
+#TARGET_LINK_LIBRARIES(asm ${ZMQ_LIB})

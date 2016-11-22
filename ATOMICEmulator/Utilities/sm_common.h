@@ -29,8 +29,14 @@ SOFTWARE.
 #include <string>  
 #include <ostream>
 #include <ctime>
+#include <time.h>
 //network on steroids
-#include "zhelpers.hpp"
+//#include "zhelpers.hpp"
+
+#if (!defined(WIN32))
+#   include <sys/time.h>
+#   include <unistd.h>
+#endif
 
 class Serializable
 {

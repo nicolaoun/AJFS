@@ -55,6 +55,8 @@
 #include <algorithm>
 #include <thread>
 #include <mutex>
+//JSON
+#include "rapidjson/document.h"
 
 // Process Types
 enum ProcessType{
@@ -107,7 +109,7 @@ enum MessageType{
 };
 
 // Network Settings
-const std::size_t MAX_BUFFER_SIZE = 100;
+const std::size_t MAX_BUFFER_SIZE = 1024;
 
 // Error Types
 enum ErrorType{
@@ -132,7 +134,7 @@ const std::size_t MIN_TIMEOUT = 1;
 //int pkt_vid_compare(const void *id1, const void *id2);  //packet comparison used by qsort
 class CTRLPacket : public Serializable{
 public:
-    int msgType;        // Type of the message
+    int msgType;                // Type of the message
     int fsize;                  // Size of the file
     int counter;                // Used to determine if this is a new packet
     
@@ -141,13 +143,30 @@ public:
     virtual void serialize(std::ostream& stream)
     {
         // Serialization code
-        stream << msgType << " "  << fsize << " " << counter;
+        // stream << msgType << " "  << fsize << " " << counter;
+        stream << "{\"mType\" : " << msgType << ", \"fSize\" : "  << fsize << ", \"Counter\" : " << counter <<"}";
     }
     
     virtual void deserialize(std::istream& stream)
     {
         // Deserialization code
         stream >> msgType >> fsize >> counter;
+    }
+
+    virtual void deserialize(std::string jsonstr)
+    {
+        std::cout << "Called CTRLPacket deserialise()....\n";
+
+        rapidjson::Document jsonDoc;
+
+        //parse JSON
+        jsonDoc.Parse(jsonstr.c_str());
+
+        // Deserialization code
+        //stream >> msgType >> fsize >> counter;
+        msgType = jsonDoc["mType"].GetInt();
+        fsize = jsonDoc["fSize"].GetInt();
+        counter = jsonDoc["Counter"].GetInt();
     }
 };
 
@@ -162,7 +181,7 @@ public:
     char ip_addr[30];       // node ip address
     int port;               // node incoming port
     int sock;               // node communication socket
-    zmq::socket_t *z_sock;  // node zmq socket
+    //zmq::socket_t *z_sock;  // node zmq socket
 
     int req_counter_;           // request counter
     int receive_counter_;       // count # of messages received
@@ -291,9 +310,17 @@ protected:
             DEBUGING(1, "Expecting to receive packet at socket %d...\n", sock);
             
             int rcv_bytes = recv(sock, rcvbuf, MAX_BUFFER_SIZE,0);
+
+            DEBUGING(2, "Received Buffer: %s, Bytes:%d, Socket %d...\n", rcvbuf, rcv_bytes, sock);
             
             if ( rcv_bytes < 0) { /* Get message */
                 REPORTERROR("Receiving packet on socket %d", sock);
+                return false;
+            }
+
+            // empty message
+            if ( rcv_bytes == 0)
+            {
                 return false;
             }
             
@@ -302,7 +329,8 @@ protected:
             
             // deserialize the packet received
             std::istream istm(&sb);
-            p->deserialize(istm);
+            //p->deserialize(istm);
+            p->deserialize(sb.str());
             
             DEBUGING(1, "Received Buffer: %s, Size: %d", sb.str().c_str(), rcv_bytes);
         }
@@ -320,7 +348,7 @@ protected:
     /***************************************
      *          ZMQ Socket
      ***************************************/
-
+/*
     // Overloaded send method
     template <typename PacketClass>
     bool send_pkt(zmq::socket_t z_sock, PacketClass *p)
@@ -363,7 +391,8 @@ protected:
             zmq::message_t reply;
             z_sock.recv(&reply);
 
-            if ( !reply.data()) { /* Get message */
+            // Get messgage
+            if ( !reply.data()) {
                 REPORTERROR("Receiving packet on ZMQ socket");
                 return false;
             }
@@ -381,6 +410,7 @@ protected:
 
         return true;
     }
+    */
     
     // Logging
     void init_logfile(std::string dir="");
