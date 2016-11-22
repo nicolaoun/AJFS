@@ -82,7 +82,10 @@ class EventHandler(pyinotify.ProcessEvent):
 
 	if (type_of_change == 'Delete-Renamed-' and
            checkGoutput[0][-4:] != '.swp' and
- 	   checkGoutput[0] != '.goutputstream'):
+ 	   checkGoutput[0] != '.goutputstream' and
+           splits[2][fileNameCheckLen-1] != '~'):
+	   #not checkGoutput[0].startswith(".")):
+           print("-->Delete-Renamed-")
 	   if os.path.isfile(bkupFile):
 	      os.remove(bkupFile)
 	      print ("Removed-:" + bkupFile)
@@ -93,6 +96,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	     checkGoutput[0] != '.goutputstream' and 
              checkGoutput[0][-4:] != '.swp' and 
              splits[2][fileNameCheckLen-1] != '~'):
+           print("-->Modified-")
 	   if os.path.isfile(bkupFile):
 	      #use difflib here compare the two files
 	      difference = difflib.ndiff(open(bkupFile).readlines(), open(updatedFile).readlines())
@@ -142,15 +146,16 @@ class EventHandler(pyinotify.ProcessEvent):
              checkGoutput[0] != '.goutputstream' and
              checkGoutput[0][-4:] != '.swp' and
              splits[2][fileNameCheckLen-1] != '~'):
+           print("-->Created-")
 	   #shutil.copy(path, bkupFile)
 	   open(bkupFile, 'a').close()
-	   print "Created-: New file " + path
-	   print "Created-: Backup Empty file " + bkupFile
+	   print "New file " + path
+	   print "Backup Empty file " + bkupFile
 	   #Create Global Record Entry for First Time
            globalRec = open(globalRecFile,"a")
 	   globalRec.write(path+','+ str(inode_id) + ',0,-1,0\n')
            globalRec.close()
-      	   print "Global Record Updated..."
+      	   print "Created Global Record Entry..."
 	else: 
 	   print "Unhandled event..."
 	   #if checkGoutput[0] != '.goutputstream' and splits[2][fileNameCheckLen-1] != '~':
