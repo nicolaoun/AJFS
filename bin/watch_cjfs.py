@@ -298,39 +298,60 @@ class EventHandler(pyinotify.ProcessEvent):
 
     #APPENDTOJRNL FUNCTION
     def appendMergeToLocalJrnl(self,inodeid_,globalRecordFile_):
-	print("func:appendMergeToLocalJrnl()")
- 	print(inodeid_)
-        received_jrnl = "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)
+	#CURR_CLIENT = "01"
+	#inodeid_ = 921034
+	received_jrnl = "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)
 	local_jrnl = "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_)
+	globalRecordFile_ = "client_"+CURR_CLIENT+"/global/globalRecord"
+
+	print("func:appendMergeToLocalJrnl()")
+	#print(inodeid_)
 
 	if os.path.isfile(received_jrnl):
-	   #use difflib here compare the two files
-	   difference = difflib.ndiff(open(local_jrnl).readlines(), open(received_jrnl).readlines())
-	   jrnlChanges = list(difference) #convert all changes to a list
-	   #print jrnlChanges
-	   lineNo = 0
-	   changes = []
-	   for i in jrnlChanges:
-	      #print i
-	      tempLine = i.split('\n')
-	      if tempLine[0][:1] == '+' or tempLine[0][:1] == '-':
-		 changes.append(tempLine[0][2:].strip('\n'))
-		 lineNo = lineNo + 1 
-	   print changes
-	   print lineNo
+	    rcvd_jrnl = open(received_jrnl, "r") 
+	    lcl_jrnl = open(local_jrnl, "r")
+	    rcvd_ver = 4 #UPDATE
+	    local_ver = int(integrate.get_global_record(globalRecordFile_,inodeid_,'get_jrnl_ver'))
+	    
+	    if (local_ver < rcvd_ver):  
+		#use difflib here compare the two files
+		#difference = difflib.ndiff(open(local_jrnl).readlines(), open(received_jrnl).readlines())
+		difference = difflib.ndiff(lcl_jrnl.readlines(), rcvd_jrnl.readlines())
+		jrnlChanges = list(difference) #convert all changes to a list
+		#print jrnlChanges
+		lineNo = 0
+		changes = []
+		for i in jrnlChanges:
+		   #print i
+		   tempLine = i.split('\n')
+		   if tempLine[0][:1] == '+' or tempLine[0][:1] == '-':
+		       changes.append(tempLine[0][2:].strip('\n'))
+		       lineNo = lineNo + 1 
+		print changes
+		print lineNo
 	   
 	   
-	   #Append local journal with new lines
-	   jrnl = open("client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "a")
-	   for i in changes:
-	      jrnl.write(i+'\n')
-	   jrnl.close()
+		#Append local journal with new lines
+		jrnl = open("client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "a")
+		for i in changes:
+		    jrnl.write(i+'\n')
+		jrnl.close()
 
-	   lastWrittenToJrnl = integrate.get_global_record(globalRecordFile_,inodeid_,'get_last_line_written_to_jrnl')
-	   print "get last line written: " + str(lastWrittenToJrnl)
-	   #update last line written to journal in global record
-	   #update_global_record(self, global_rec_file,inode_no,line_no,type_of_update)
-	   self.update_global_record(globalRecordFile_,inodeid_,lastWrittenToJrnl+lineNo,'last_line_added')
+		lastWrittenToJrnl = integrate.get_global_record(globalRecordFile_,inodeid_,'get_last_line_written_to_jrnl')
+		print "get last line written: " + lastWrittenToJrnl
+		newLastWrittenToJrnl = int(lastWrittenToJrnl) + lineNo + 1
+		print "new last line: " + str(newLastWrittenToJrnl)
+		#update last line written to journal in global record
+		#update_global_record(self, global_rec_file,inode_no,line_no,type_of_update)
+		update_global_record(globalRecordFile_,inodeid_,newLastWrittenToJrnl,'last_line_added')
+		lcl_jrnl.close()
+		rcvd_jrnl.close()
+
+		integrate.integrate_jrnl(CURR_CLIENT,inodeid_,'local')
+	    else:
+		print("Received Journal Discarded..." + "l:" + str(local_ver) + "|r:" + str(rcvd_ver))
+	else:
+	    print("Journal not received")
 
 
 

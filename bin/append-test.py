@@ -45,7 +45,7 @@ def update_global_record(global_rec_file,inode_no,line_no,type_of_update): #from
 
 
 CURR_CLIENT = "01"
-inodeid_ = 922754
+inodeid_ = 921034
 received_jrnl = "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)
 local_jrnl = "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_)
 globalRecordFile_ = "client_"+CURR_CLIENT+"/global/globalRecord"
@@ -56,7 +56,7 @@ print(inodeid_)
 if os.path.isfile(received_jrnl):
     rcvd_jrnl = open(received_jrnl, "r") 
     lcl_jrnl = open(local_jrnl, "r")
-    rcvd_ver = 3
+    rcvd_ver = 4
     local_ver = int(integrate.get_global_record(globalRecordFile_,inodeid_,'get_jrnl_ver'))
     
     if (local_ver < rcvd_ver):  
