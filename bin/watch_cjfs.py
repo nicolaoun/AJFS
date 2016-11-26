@@ -109,7 +109,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	         self.write_to_journal(jrnlPath,splits[2].strip('~'),changes,inode_id,globalRecFile) #write changes to journal
 	         shutil.copy(updatedFile, bkupFile) #once journal is written UPDATE file in temp_cjfs folder for next update
    		 noOfLinesInJournal = sum(1 for line in open(jrnlPath))
-	         self.update_global_record(globalRecFile,inode_id,noOfLinesInJournal,'last_line_added')
+	         self.update_global_record(globalRecFile,inode_id,noOfLinesInJournal,2)
 
                  #self.appendMergeToLocalJrnl(inode_id,globalRecFile)
 
@@ -143,14 +143,14 @@ class EventHandler(pyinotify.ProcessEvent):
            for k in range(0,len(tempgRFile)): #update list
               globalSplit = tempgRFile[k].split(',')
               if globalSplit[1].strip('\n') == str(inode_no):
-		 if type_of_update == 'last_line_added':
+		 if type_of_update == 2: #2=last_line_added
                     globalSplit[2] = str(line_no-1)
                     globalSplit[3] = globalSplit[3].strip('\n')
-                 elif type_of_update == 'last_line_added_post_rollup' and int(globalSplit[3].strip('\n')) > 0:
+                 elif type_of_update == 3 and int(globalSplit[3].strip('\n')) > 0: #3=last_line_added_post_rollup
                     globalSplit[2] = globalSplit[2].strip('\n')
                     globalSplit[3] = str(int(globalSplit[3].strip('\n'))-1)
                     globalSplit[4]= str(int(globalSplit[4])+1)
-                 elif type_of_update == 'last_line_added_post_rollup' and int(globalSplit[3].strip('\n')) < 0:
+                 elif type_of_update == 3 and int(globalSplit[3].strip('\n')) < 0:
 		    globalSplit[2] = globalSplit[2].strip('\n')
                     globalSplit[4]= str(int(globalSplit[4])+1)
                  tempgRFile[k] = globalSplit[0]+','+globalSplit[1]+','+globalSplit[2]+','+globalSplit[3]+','+globalSplit[4]
@@ -173,7 +173,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	      print "Journal Threshold Reached...Deleting from Top..."
 	      del tempJrnl[0]
 	      tempJrnl.append(lineToBeAdded )
-              self.update_global_record(globalRecordFile,inodeid,0,'last_line_added_post_rollup')
+              self.update_global_record(globalRecordFile,inodeid,0,3)
 	   else:
               tempJrnl.append(lineToBeAdded)
 	   
@@ -185,7 +185,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	   #WRITE
 	
 	else: #if the journal does not exist
-           print "Journal does not exist. Creating..."
+           print "Creating new journal..."
 	   jrnl = open(jrnl_path, "a")			
 	   jrnl.write(lineToBeAdded)
 	   jrnl.close() 
@@ -193,44 +193,20 @@ class EventHandler(pyinotify.ProcessEvent):
     def READ(self, inodeid_):
 	print("func:READ()")
 	"""
-        #Write journal to Shared Memory
-	#Before writing to shared memory fetch the latest ver from shared storage
-        subprocess.call(["./asm", "-t read", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/receive"])     
-        
-	if os.path.isfile("client_"+CURR_CLIENT+"/receive/A-"+str(inodeid)):
-           received_jrnl_time_stamp = os.path.getmtime("client_"+CURR_CLIENT+"/receive/A-"+str(inodeid))
-           print "RECEIVED JRNL: "
-           print received_jrnl_time_stamp
-           local_jrnl_time_stamp = os.path.getmtime("client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid))
-           print "LOCAL JRNL: "
-           print local_jrnl_time_stamp
-      
-	#compare the version with the version that we have locally at the client
-        #if received version newer
-	if os.path.isfile("client_"+CURR_CLIENT+"/receive/A-"+str(inodeid)):
-           if ( received_jrnl_time_stamp > local_jrnl_time_stamp):
-              print "Integrating..."
-              #integrate to client_0x/wf
-              integrate.integrate_jrnl(CURR_CLIENT, inodeid)             
-              #generate new lines and append to local journal client_0x/Journal
-              #write to shared storage
-              #subprocess.call(["./asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
-           else:
-              #write to shared storage
-              print "Writing to shared storage...(w/o integrating)"
-              subprocess.call(["./asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
-              
-        else:
-           print "No received Journal to compare at: client_"+CURR_CLIENT+"  A-"+str(inodeid)
-
+        #Read Journal from Shared Memory
+	global CURR_CLIENT
+        subprocess.call(["./asm", "-t read", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive"])
+	globalRecordFile_ = "client_" + CURR_CLIENT + "/global/globalRecord" 
+	appendMergeToLocalJrnl(self,inodeid_,globalRecordFile_)
+        integrate.integrate_jrnl(CURR_CLIENT,inodeid_,'local')
+	WRITE(inodeid_)
         """
 	
     def WRITE(self, inodeid_):
 	print("func:WRITE()")
 	"""
 	#WRITE TO SHARED MEMORY
-        #Write journal to Shared Memory
-        #global CURR_CLIENT
+        global CURR_CLIENT
         #subprocess.call(["./asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
         
         #PUT IN WHILE LOOP
@@ -289,11 +265,9 @@ class EventHandler(pyinotify.ProcessEvent):
 		print "get last line written: " + lastWrittenToJrnl
 		newLastWrittenToJrnl = int(lastWrittenToJrnl) + lineNo + 1
 		print "new last line: " + str(newLastWrittenToJrnl)
-		update_global_record(globalRecordFile_,inodeid_,newLastWrittenToJrnl,'last_line_added')
+		update_global_record(globalRecordFile_,inodeid_,newLastWrittenToJrnl,2)
 		lcl_jrnl.close()
 		rcvd_jrnl.close()
-
-		integrate.integrate_jrnl(CURR_CLIENT,inodeid_,'local')
 	    else:
 		print("Received Journal Discarded..." + "l:" + str(local_ver) + "|r:" + str(rcvd_ver))
 	else:
