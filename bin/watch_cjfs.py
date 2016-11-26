@@ -63,6 +63,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	
     def handle_file_modified(self, path, type_of_change):
 	print("func:handle_file_modified()")
+	print(path)
 	splits = path.rsplit('/',2)
 	fileNameCheckLen = len(splits[2])	
 	checkGoutput = splits[2].rsplit('-',1)
@@ -126,15 +127,17 @@ class EventHandler(pyinotify.ProcessEvent):
 		 jrnlPath = splits[0] + "/Journal/A-" + str(inode_id)
 		 #write changes to journal
 	         self.write_to_journal(jrnlPath,splits[2].strip('~'),changes,inode_id,globalRecFile)
-	         print "Appended-: " + jrnlPath 
+	         #print "Appended-: "# + jrnlPath 
 		 #once journal is written UPDATE file in temp_cjfs folder for next update
 	         shutil.copy(updatedFile, bkupFile)
-	         print "Updated-: Backup file " + bkupFile
+	         #print "Updated-: Backup file "# + bkupFile
 		 #Find current Journal size
    		 noOfLinesInJournal = sum(1 for line in open(jrnlPath))
 	         #update last added Journal line counter to globalRecordFile
 	         #path,inode_id,last_line_added_to_journal,last_line_written_to_file
 	         self.update_global_record(globalRecFile,inode_id,noOfLinesInJournal,'last_line_added')
+
+                 #self.appendMergeToLocalJrnl(inode_id,globalRecFile)
 
 	      else:
 	         print "No changes to Journal or Backup"
@@ -149,13 +152,16 @@ class EventHandler(pyinotify.ProcessEvent):
            print("-->Created-")
 	   #shutil.copy(path, bkupFile)
 	   open(bkupFile, 'a').close()
-	   print "New file " + path
-	   print "Backup Empty file " + bkupFile
+	   #print "New file "# + path
+	   #print "Backup Empty file "# + bkupFile
 	   #Create Global Record Entry for First Time
            globalRec = open(globalRecFile,"a")
+	   #0,last line added to journal
+	   #-1,last line written to file
+           #0,rolled up lines
 	   globalRec.write(path+','+ str(inode_id) + ',0,-1,0\n')
            globalRec.close()
-      	   print "Created Global Record Entry..."
+      	   #print "Created Global Record Entry..."
 	else: 
 	   print "Unhandled event..."
 	   #if checkGoutput[0] != '.goutputstream' and splits[2][fileNameCheckLen-1] != '~':
@@ -165,6 +171,7 @@ class EventHandler(pyinotify.ProcessEvent):
     def update_global_record(self, global_rec_file,inode_no,line_no,type_of_update):
 	#print "inode: "+str(inode_no) + "line: " + str(line_no) + "type: " + type_of_update
 	print("func:update_global_record()")
+	print(inode_no)
         if 1==1:#type_of_update == 'last_line_added':
            tempgRFile = []
            with open(global_rec_file) as fil:
@@ -188,7 +195,7 @@ class EventHandler(pyinotify.ProcessEvent):
                     #globalSplit[3] = str(int(globalSplit[3].strip('\n'))-1)
                     globalSplit[4]= str(int(globalSplit[4])+1)
                  tempgRFile[k] = globalSplit[0]+','+globalSplit[1]+','+globalSplit[2]+','+globalSplit[3]+','+globalSplit[4]
-		 print tempgRFile[k]
+		 #print tempgRFile[k]
            #write back to globalRecord file
            updategRec = open(global_rec_file,"w")
            for l in range(0,len(tempgRFile)):
@@ -196,6 +203,8 @@ class EventHandler(pyinotify.ProcessEvent):
            updategRec.close() 
 
     def write_to_journal(self,jrnl_path,file_name, changes_, inodeid, globalRecordFile):
+	print("func:write_to_journal()")
+	print(file_name + " " + str(inodeid))
         global CURR_CLIENT
 	lineToBeAdded = str(datetime.now()) + ',' + str(file_name) + ',' + str(inodeid) + ',' + changes_
 	tempJrnl = [] #Journal will be temporarily loaded into memory
@@ -220,7 +229,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	      jrnl.write(i+'\n')
 	   jrnl.close()
 
-	   self.appendMergeToLocalJrnl(inodeid,globalRecordFile)
+
 	   """
            #Write journal to Shared Memory
 	   #Before writing to shared memory fetch the latest ver from shared storage
@@ -287,9 +296,10 @@ class EventHandler(pyinotify.ProcessEvent):
 	print success, err
 	"""
 
-    #APPENDTOJRNL FUNCTION HERE
+    #APPENDTOJRNL FUNCTION
     def appendMergeToLocalJrnl(self,inodeid_,globalRecordFile_):
-	global CURR_CLIENT
+	print("func:appendMergeToLocalJrnl()")
+ 	print(inodeid_)
         received_jrnl = "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)
 	local_jrnl = "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_)
 

@@ -6,8 +6,9 @@ import time
 
 
 def update_global_record(global_rec_file,inode_no,line_no,type_of_update):
-	print "inode: "+str(inode_no) + "line: " + str(line_no) + "type: " + type_of_update
-        if type_of_update == 'last_line_written_to_file':
+	print("integrate func:update_global_record")
+	#print "inode: "+str(inode_no) + "line: " + str(line_no) + "type: " + type_of_update
+        if type_of_update == 1: #last_line_written_to_file=1
            tempgRFile = []
            with open(global_rec_file) as fil:
               tempgRFile = fil.read().splitlines()
@@ -16,7 +17,10 @@ def update_global_record(global_rec_file,inode_no,line_no,type_of_update):
               globalSplit = tempgRFile[k].split(',')
 	      #print globalSplit
               if globalSplit[1].strip('\n') == str(inode_no):
-                 globalSplit[3]= str(line_no-1)
+	         if (int(globalSplit[3]) > -1):
+                    globalSplit[3]= str(line_no-1)
+		 else:
+		    globalSplit[3] = str(-1)
                  tempgRFile[k] = globalSplit[0]+','+globalSplit[1]+','+globalSplit[2]+','+globalSplit[3]+','+globalSplit[4]
            #write back to globalRecord file
            updategRec = open(global_rec_file,"w")
@@ -39,6 +43,20 @@ def get_global_record(global_rec_file,inode_no,stat_req):
               if globalSplit[1].strip('\n') == str(inode_no):
                  #global_rec_file.close()
                  return globalSplit[3]
+
+
+        elif stat_req == 'get_jrnl_ver':
+           tempgRFile = []
+           tempFilename = []
+           with open(global_rec_file) as fil:
+              tempgRFile = fil.read().splitlines()
+           #update list
+           for k in range(0,len(tempgRFile)):
+              globalSplit = tempgRFile[k].split(',')
+	      #print globalSplitflr
+              if globalSplit[1].strip('\n') == str(inode_no):
+                 #global_rec_file.close()
+                 return globalSplit[2]
 
         elif stat_req == 'get_last_line_written_to_jrnl':
            tempgRFile = []
@@ -100,7 +118,9 @@ def merge_journals(CURR_CLIENT__,inodeid__):
         #write jrnl to shared memory in calling function
         
 
-def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src):
+def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src): #NOT INTEGRATING
+ 	print("func:integrate_jrnl()")
+	print(inodeid_)
         #STILL NEED TO TAKE NEW LINES AND APPEND AT THE END OF LOCAL JOURNAL
 	#--- set the time interval to check for new files (in seconds) below 
 	#    this interval should be smaller than the interval new files appear!
@@ -120,7 +140,7 @@ def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src):
 	line = ""
 	newfiles = os.listdir(dr1)
 	for i in range(0,1):#file in newfiles:
-	    print "Integrating Journal: A-"+str(inodeid_)
+	    #print "Integrating Journal: A-"+str(inodeid_)
 	    #if file == "A-915800":
             if 1==1:
 	       #inode_id = file.split('-')
@@ -128,7 +148,7 @@ def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src):
 	       last_written_counter = get_global_record('client_'+CURR_CLIENT_+'/global/globalRecord',str(inodeid_),'get_last_line_written_to_file')
 	       last_written_jrnl = get_global_record('client_'+CURR_CLIENT_+'/global/globalRecord',str(inodeid_),'get_last_line_written_to_jrnl')
 	       journal_associated_file = get_global_record('client_'+CURR_CLIENT_+'/global/globalRecord',str(inodeid_),'get_filename')	#FIX
-	      
+	       print "Journal Associated File: "+ dr2+'/'+journal_associated_file
 	       print "LAST LINE WRITTEN TO JRNL: ", last_written_jrnl
 	       print "LAST LINE WRITTEN TO FILE: ", last_written_counter
 	       print "ASSOCIATED FILENAME: ", journal_associated_file
@@ -162,7 +182,8 @@ def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src):
 		  print reconstFileText
 	       else:
 		  print "NO EXISTING FILE FOUND...REPLAY COMPLETE JOURNAL"
-		  line = j.readline()
+
+	       line = j.readline()
 	       
 	       print "JOURNAL START LINE"
 	       print line
@@ -232,7 +253,7 @@ def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src):
 				 #reconstFileText[int(parameter[0])-decrementFlag] = ""
 		           #     print reconstFileText
 		                 #print "ELSE: Removed Line: "+str(int(parameter[0])-decrementFlag)+" Deleted Node: "+str(i+1)
-		           print reconstFileText
+		           #print reconstFileText
 		           decrementFlag=decrementFlag+1
 		  currentJrnlLine=currentJrnlLine+1
 		  decrementFlag=0
@@ -241,7 +262,7 @@ def integrate_jrnl(CURR_CLIENT_,inodeid_,jrnl_src):
 	       print reconstFileText
 
 
-	       update_global_record('client_'+CURR_CLIENT_+'/global/globalRecord',inodeid_,currentJrnlLine,'last_line_written_to_file')
+	       update_global_record('client_'+CURR_CLIENT_+'/global/globalRecord',inodeid_,currentJrnlLine,1)
 	       
 
 	       #write/update file in wf folder
