@@ -1,3 +1,0 @@
-/home/count/AJFSRepo/ATOMICEmulator/CMakeFiles/edit_cache.dir
-/home/count/AJFSRepo/ATOMICEmulator/CMakeFiles/rebuild_cache.dir
-/home/count/AJFSRepo/ATOMICEmulator/CMakeFiles/asm.dir

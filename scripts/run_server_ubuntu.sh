@@ -12,7 +12,7 @@ foo=""
 
 for ((i=0; i<$1; i=i+1))
 do
-    COMMAND=$(echo "$DIR/asm -t serve -p $port -i $i")
+    COMMAND=$(echo "asm -t serve -p $port -i $i")
     #./term.sh -t $COMMAND
 
     #create new tab
@@ -21,4 +21,5 @@ do
     port=$(echo "$port+1" | bc)
 done # servers
 
-gnome-terminal "${foo[@]}"
+#gnome-terminal "${foo[@]}"
+gnome-terminal --working-directory=/home/count/AJFSRepo/bin -e './asm -t serve -p 4000 -i 1'
