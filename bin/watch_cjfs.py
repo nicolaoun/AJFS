@@ -1,4 +1,4 @@
-# Notifier
+#!/usr/bin/env python
 
 import pyinotify
 #import time
@@ -11,7 +11,7 @@ from datetime import datetime
 import sys
 import subprocess
 import integrate
-
+import json
 
 wm = pyinotify.WatchManager()  # Watch Manager
 #mask = pyinotify.IN_DELETE | pyinotify.IN_CREATE | pyinotify.IN_MODIFY | pyinotify.IN_MOVE_SELF | pyinotify.IN_ATTRIB # watched events
@@ -112,6 +112,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	         self.update_global_record(globalRecFile,inode_id,noOfLinesInJournal,2)
 
                  #self.appendMergeToLocalJrnl(inode_id,globalRecFile)
+		 WRITE(inode_id)
 
 	      else:
 	         print "No changes to Journal or Backup"
@@ -190,21 +191,24 @@ class EventHandler(pyinotify.ProcessEvent):
 	   jrnl.write(lineToBeAdded)
 	   jrnl.close() 
 	   
+    #MAKE PERIODIC
     def READ(self, inodeid_):
 	print("func:READ()")
-	"""
         #Read Journal from Shared Memory
 	global CURR_CLIENT
         subprocess.call(["./asm", "-t read", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive"])
 	globalRecordFile_ = "client_" + CURR_CLIENT + "/global/globalRecord" 
+	#Compare version, if rcvd version greater
+	#new journal was written to shared memory (are we outdated for circular journal)
+	#issue a fetch command (return file(for circular), journal and meta data) 
+	#OVERWITE LOCAL JOURNAL
+
 	appendMergeToLocalJrnl(self,inodeid_,globalRecordFile_)
         integrate.integrate_jrnl(CURR_CLIENT,inodeid_,'local')
 	WRITE(inodeid_)
-        """
 	
     def WRITE(self, inodeid_):
 	print("func:WRITE()")
-	"""
 	#WRITE TO SHARED MEMORY
         global CURR_CLIENT
         #subprocess.call(["./asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
@@ -217,7 +221,9 @@ class EventHandler(pyinotify.ProcessEvent):
 	print success, err		
 	#success = 0 #FIX THIS and JOURNAL NOT RECEIVED IN receive FOLDER AT THE CLIENT
 	if success == 1:
-	   integrate.merge_journals(CURR_CLIENT, inodeid)
+	   #integrate.merge_journals(CURR_CLIENT, inodeid)
+	   #READ(inodeid_)
+	   appendMergeToLocalJrnl(inodeid_,"client_"+CUR_CLIENT+"/global/globalRecord")
 	
         #write local journal to shared memory
         subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid), "client_"+CURR_CLIENT+"/receiveA-"+str(inodeid)])
@@ -225,7 +231,19 @@ class EventHandler(pyinotify.ProcessEvent):
 	success, err = process.communicate()
 	print "POST MERGE WRITE RETURNED: "
 	print success, err
-	"""
+
+    def getReceivdeRecord(self,inodeid_,serverID_,reqType):
+	#rcvdMetaData = open("server_"+serverID_+"/.meta/A-"+inodeid_+".meta"", "r")
+	metaPath ="server_"+serverID_+"/.meta/A-"+inodeid_+".meta"
+
+	with open(metaPath) as json_data:
+	   d = json.load(json_data)
+	
+	if (reqType == "get_RJV"):
+	   return d["ts"]
+	elif (reqType == "get_LW"):
+	   return d["wid"]
+
 
     def appendMergeToLocalJrnl(self,inodeid_,globalRecordFile_):
 	#CURR_CLIENT = "01"
@@ -240,36 +258,38 @@ class EventHandler(pyinotify.ProcessEvent):
 	if os.path.isfile(received_jrnl):
 	    rcvd_jrnl = open(received_jrnl, "r") 
 	    lcl_jrnl = open(local_jrnl, "r")
-	    rcvd_ver = 4 #UPDATE
+	    rcvd_ver = self.getReceivedRecord(inodeid_,1,"get_RJV") #get rcvd jrnl ver
+	    rcvd_ver_last_writer = self.getTeceivedRecord(inodeid_,1,"get_LW") #get rcvd jrnl last writer
 	    local_ver = int(integrate.get_global_record(globalRecordFile_,inodeid_,'get_jrnl_ver'))
 	    
-	    if (local_ver < rcvd_ver):  
-		difference = difflib.ndiff(lcl_jrnl.readlines(), rcvd_jrnl.readlines())
-		jrnlChanges = list(difference) #convert all changes to a list
-		lineNo = 0
-		changes = []
-		for i in jrnlChanges:
-		   tempLine = i.split('\n')
-		   if tempLine[0][:1] == '+' or tempLine[0][:1] == '-':
-		       changes.append(tempLine[0][2:].strip('\n'))
-		       lineNo = lineNo + 1 
-		print changes
-		print lineNo
+	    if (local_ver < rcvd_ver):
+	      if (rcvd_ver_last_writer != int(CURR_CLIENT)):  
+	         difference = difflib.ndiff(lcl_jrnl.readlines(), rcvd_jrnl.readlines())
+		 jrnlChanges = list(difference) #convert all changes to a list
+		 lineNo = 0
+		 changes = []
+		 for i in jrnlChanges:
+		    tempLine = i.split('\n')
+		    if tempLine[0][:1] == '+' or tempLine[0][:1] == '-':
+		        changes.append(tempLine[0][2:].strip('\n'))
+		        lineNo = lineNo + 1 
+		 print changes
+		 print lineNo
 	   
-		jrnl = open("client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "a") #Append local journal with new lines
-		for i in changes:
-		    jrnl.write(i+'\n')
-		jrnl.close()
+		 jrnl = open("client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "a") #Append local journal with new lines
+		 for i in changes:
+		     jrnl.write(i+'\n')
+		 jrnl.close()
 
-		lastWrittenToJrnl = integrate.get_global_record(globalRecordFile_,inodeid_,'get_last_line_written_to_jrnl')
-		print "get last line written: " + lastWrittenToJrnl
-		newLastWrittenToJrnl = int(lastWrittenToJrnl) + lineNo + 1
-		print "new last line: " + str(newLastWrittenToJrnl)
-		update_global_record(globalRecordFile_,inodeid_,newLastWrittenToJrnl,2)
-		lcl_jrnl.close()
-		rcvd_jrnl.close()
+		 lastWrittenToJrnl = integrate.get_global_record(globalRecordFile_,inodeid_,'get_last_line_written_to_jrnl')
+		 print "get last line written: " + lastWrittenToJrnl
+		 newLastWrittenToJrnl = int(lastWrittenToJrnl) + lineNo + 1
+		 print "new last line: " + str(newLastWrittenToJrnl)
+		 update_global_record(globalRecordFile_,inodeid_,newLastWrittenToJrnl,2)
+		 lcl_jrnl.close()
+		 rcvd_jrnl.close()
 	    else:
-		print("Received Journal Discarded..." + "l:" + str(local_ver) + "|r:" + str(rcvd_ver))
+		 print("Received Journal Discarded..." + "l:" + str(local_ver) + "|r:" + str(rcvd_ver))
 	else:
 	    print("Journal not received")
 
