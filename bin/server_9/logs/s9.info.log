@@ -1,0 +1,57 @@
+[INFO]    SERVER 9: 	2016-12-10 19:42:30 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 9: Initialized on Port:4009
+[INFO]    SERVER 9: Starting server 9
+[INFO]    SERVER 9: Listening for connections to port 4009...
+[INFO]    SERVER 9: Accepting connections on port 4009
+[INFO]    SERVER 9: 	2016-12-10 20:05:04 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 9: Initialized on Port:4009
+[INFO]    SERVER 9: Starting server 9
+[INFO]    SERVER 9: Listening for connections to port 4009...
+[INFO]    SERVER 9: Accepting connections on port 4009
+[INFO]    SERVER 9: 	2016-12-10 20:30:39 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 9: Initialized on Port:4009
+[INFO]    SERVER 9: Starting server 9
+[INFO]    SERVER 9: Listening for connections to port 4009...
+[INFO]    SERVER 9: Accepting connections on port 4009
+[INFO]    SERVER 9: 	2016-12-12 13:49:09 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 9: Initialized on Port:4009
+[INFO]    SERVER 9: Starting server 9
+[INFO]    SERVER 9: Listening for connections to port 4009...
+[INFO]    SERVER 9: Accepting connections on port 4009
+[INFO]    SERVER 9: Accepted connection from localhost (IP:)
+[INFO]    SERVER 9: Accepting connections on port 4009
+[INFO]    SERVER 9: 
+********************************************************
+[INFO]    SERVER 9: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <0, 0>
+[INFO]    SERVER 9: ---------------------------------------------------------
+[INFO]    SERVER 9: READACK to 1, rcvTag=<0,0>, sendTag=<0,0>
+[INFO]    SERVER 9: ********************************************************
+[INFO]    SERVER 9: 
+********************************************************
+[INFO]    SERVER 9: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <0, 0>
+[INFO]    SERVER 9: ---------------------------------------------------------
+[INFO]    SERVER 9: Receiving file...0
+[INFO]    SERVER 9: New maxTag=<1,1> From:1
+ --> Copied journal from ./server_9/rcvd_files/src1.[1,1].A-280009.temp to ./server_9/A-280009
+[INFO]    SERVER 9: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
+[INFO]    SERVER 9: ********************************************************
+[INFO]    SERVER 9: Accepted connection from localhost (IP:)
+[INFO]    SERVER 9: Accepting connections on port 4009
+[INFO]    SERVER 9: 
+********************************************************
+[INFO]    SERVER 9: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <1, 1>
+[INFO]    SERVER 9: ---------------------------------------------------------
+[INFO]    SERVER 9: Transmitting file...0
+[INFO]    SERVER 9: READACK to 1, rcvTag=<0,0>, sendTag=<1,1>
+[INFO]    SERVER 9: ********************************************************
+[INFO]    SERVER 9: 
+********************************************************
+[INFO]    SERVER 9: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <1, 1>
+[INFO]    SERVER 9: ---------------------------------------------------------
+[INFO]    SERVER 9: Receiving file...0
+[INFO]    SERVER 9: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
+[INFO]    SERVER 9: ********************************************************

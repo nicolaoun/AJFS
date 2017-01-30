@@ -1,0 +1,69 @@
+[INFO]    SERVER 1: 	2016-12-09 23:44:49 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 1: Initialized on Port:4000
+[INFO]    SERVER 1: Starting server 1
+[INFO]    SERVER 1: Listening for connections to port 4000...
+[INFO]    SERVER 1: Accepting connections on port 4000
+[INFO]    SERVER 1: 	2016-12-10 19:41:18 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 1: Initialized on Port:4000
+[INFO]    SERVER 1: Starting server 1
+[INFO]    SERVER 1: Listening for connections to port 4000...
+[INFO]    SERVER 1: Accepting connections on port 4000
+[INFO]    SERVER 1: 	2016-12-10 19:42:28 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 1: Initialized on Port:4001
+[INFO]    SERVER 1: Starting server 1
+[INFO]    SERVER 1: Listening for connections to port 4001...
+[INFO]    SERVER 1: Accepting connections on port 4001
+[INFO]    SERVER 1: 	2016-12-10 20:05:02 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 1: Initialized on Port:4001
+[INFO]    SERVER 1: Starting server 1
+[INFO]    SERVER 1: Listening for connections to port 4001...
+[INFO]    SERVER 1: Accepting connections on port 4001
+[INFO]    SERVER 1: 	2016-12-10 20:30:36 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 1: Initialized on Port:4001
+[INFO]    SERVER 1: Starting server 1
+[INFO]    SERVER 1: Listening for connections to port 4001...
+[INFO]    SERVER 1: Accepting connections on port 4001
+[INFO]    SERVER 1: 	2016-12-12 13:49:06 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 1: Initialized on Port:4001
+[INFO]    SERVER 1: Starting server 1
+[INFO]    SERVER 1: Listening for connections to port 4001...
+[INFO]    SERVER 1: Accepting connections on port 4001
+[INFO]    SERVER 1: Accepted connection from localhost (IP:)
+[INFO]    SERVER 1: Accepting connections on port 4001
+[INFO]    SERVER 1: 
+********************************************************
+[INFO]    SERVER 1: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <0, 0>
+[INFO]    SERVER 1: ---------------------------------------------------------
+[INFO]    SERVER 1: READACK to 1, rcvTag=<0,0>, sendTag=<0,0>
+[INFO]    SERVER 1: ********************************************************
+[INFO]    SERVER 1: 
+********************************************************
+[INFO]    SERVER 1: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <0, 0>
+[INFO]    SERVER 1: ---------------------------------------------------------
+[INFO]    SERVER 1: Receiving file...0
+[INFO]    SERVER 1: New maxTag=<1,1> From:1
+ --> Copied journal from ./server_1/rcvd_files/src1.[1,1].A-280009.temp to ./server_1/A-280009
+[INFO]    SERVER 1: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
+[INFO]    SERVER 1: ********************************************************
+[INFO]    SERVER 1: Accepted connection from localhost (IP:)
+[INFO]    SERVER 1: Accepting connections on port 4001
+[INFO]    SERVER 1: 
+********************************************************
+[INFO]    SERVER 1: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <1, 1>
+[INFO]    SERVER 1: ---------------------------------------------------------
+[INFO]    SERVER 1: Transmitting file...0
+[INFO]    SERVER 1: READACK to 1, rcvTag=<0,0>, sendTag=<1,1>
+[INFO]    SERVER 1: ********************************************************
+[INFO]    SERVER 1: 
+********************************************************
+[INFO]    SERVER 1: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <1, 1>
+[INFO]    SERVER 1: ---------------------------------------------------------
+[INFO]    SERVER 1: Receiving file...0
+[INFO]    SERVER 1: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
+[INFO]    SERVER 1: ********************************************************

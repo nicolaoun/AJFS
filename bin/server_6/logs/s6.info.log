@@ -1,0 +1,57 @@
+[INFO]    SERVER 6: 	2016-12-10 19:42:30 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 6: Initialized on Port:4006
+[INFO]    SERVER 6: Starting server 6
+[INFO]    SERVER 6: Listening for connections to port 4006...
+[INFO]    SERVER 6: Accepting connections on port 4006
+[INFO]    SERVER 6: 	2016-12-10 20:05:03 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 6: Initialized on Port:4006
+[INFO]    SERVER 6: Starting server 6
+[INFO]    SERVER 6: Listening for connections to port 4006...
+[INFO]    SERVER 6: Accepting connections on port 4006
+[INFO]    SERVER 6: 	2016-12-10 20:30:38 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 6: Initialized on Port:4006
+[INFO]    SERVER 6: Starting server 6
+[INFO]    SERVER 6: Listening for connections to port 4006...
+[INFO]    SERVER 6: Accepting connections on port 4006
+[INFO]    SERVER 6: 	2016-12-12 13:49:08 - DEBUG_LEVEL 0
+************************
+[INFO]    SERVER 6: Initialized on Port:4006
+[INFO]    SERVER 6: Starting server 6
+[INFO]    SERVER 6: Listening for connections to port 4006...
+[INFO]    SERVER 6: Accepting connections on port 4006
+[INFO]    SERVER 6: Accepted connection from localhost (IP:)
+[INFO]    SERVER 6: Accepting connections on port 4006
+[INFO]    SERVER 6: 
+********************************************************
+[INFO]    SERVER 6: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <0, 0>
+[INFO]    SERVER 6: ---------------------------------------------------------
+[INFO]    SERVER 6: READACK to 1, rcvTag=<0,0>, sendTag=<0,0>
+[INFO]    SERVER 6: ********************************************************
+[INFO]    SERVER 6: 
+********************************************************
+[INFO]    SERVER 6: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <0, 0>
+[INFO]    SERVER 6: ---------------------------------------------------------
+[INFO]    SERVER 6: Receiving file...0
+[INFO]    SERVER 6: New maxTag=<1,1> From:1
+ --> Copied journal from ./server_6/rcvd_files/src1.[1,1].A-280009.temp to ./server_6/A-280009
+[INFO]    SERVER 6: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
+[INFO]    SERVER 6: ********************************************************
+[INFO]    SERVER 6: Accepted connection from localhost (IP:)
+[INFO]    SERVER 6: Accepting connections on port 4006
+[INFO]    SERVER 6: 
+********************************************************
+[INFO]    SERVER 6: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <1, 1>
+[INFO]    SERVER 6: ---------------------------------------------------------
+[INFO]    SERVER 6: Transmitting file...0
+[INFO]    SERVER 6: READACK to 1, rcvTag=<0,0>, sendTag=<1,1>
+[INFO]    SERVER 6: ********************************************************
+[INFO]    SERVER 6: 
+********************************************************
+[INFO]    SERVER 6: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <1, 1>
+[INFO]    SERVER 6: ---------------------------------------------------------
+[INFO]    SERVER 6: Receiving file...0
+[INFO]    SERVER 6: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
+[INFO]    SERVER 6: ********************************************************
