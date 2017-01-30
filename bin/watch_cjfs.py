@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import pyinotify
-#import time
+import time
 import difflib
 import shutil
 import os.path, time
@@ -57,81 +57,6 @@ class EventHandler(pyinotify.ProcessEvent):
         self.handle_file_modified(event.pathname, "Modified-")
 	
 	
-    def handle_file_modified(self, path, type_of_change):
-	print("func:handle_file_modified()")
-	print(path)
-	splits = path.rsplit('/',2)
-	fileNameCheckLen = len(splits[2])	
-	checkGoutput = splits[2].rsplit('-',1)
-	updatedFile = path 
-	bkupFile = splits[0] + '/temp_cjfs/' + splits[2].strip('~')
-        globalRecFile = splits[0] + '/global/globalRecord' # to keep inode filename mapping
-	
-	tempF = os.open(updatedFile, os.O_RDWR|os.O_CREAT)
-	info = os.fstat(tempF) 
-	inode_id = info.st_ino #find inode_id for the created file
-	if (type_of_change == 'Delete-Renamed-' and
-           checkGoutput[0][-4:] != '.swp' and
- 	   checkGoutput[0] != '.goutputstream' and
-           splits[2][fileNameCheckLen-1] != '~'):
-           print("-->Delete-Renamed-")
-	   if os.path.isfile(bkupFile):
-	      os.remove(bkupFile)
-	      print ("Removed-:" + bkupFile)
-	   else:
-              print("File not found: " + bkupFile)	
-	
-	elif (type_of_change == 'Modified-' and 
-	     checkGoutput[0] != '.goutputstream' and 
-             checkGoutput[0][-4:] != '.swp' and 
-             splits[2][fileNameCheckLen-1] != '~'):
-           print("-->Modified-")
-	   if os.path.isfile(bkupFile):
-	      difference = difflib.ndiff(open(bkupFile).readlines(), open(updatedFile).readlines())
-	      jrnlWriteBuff = list(difference) #convert all changes to a list
-	      lineNo = 0
-	      changes = "|"
-              for i in jrnlWriteBuff:
-                 tempLine = i.split(' ')
-                 change_transac = ""
-                 for chunks in range(1,len(tempLine)): # find a better way to do this
-                    change_transac += tempLine[chunks] + " "
-		 change_transac = change_transac[:-1]
-		 if tempLine[0] == '+' or tempLine[0] == '-':
-		    changes = changes + str(lineNo) + chr(168) + tempLine[0] + chr(168) + change_transac.strip('\n') + '|'
-                 lineNo=lineNo+1 #This line no is not going to be written on the Global Record
-
-
-	      print changes	 
-	      
-	      if not changes is "|":
-		 jrnlPath = splits[0] + "/Journal/A-" + str(inode_id)
-	         self.write_to_journal(jrnlPath,splits[2].strip('~'),changes,inode_id,globalRecFile) #write changes to journal
-	         shutil.copy(updatedFile, bkupFile) #once journal is written UPDATE file in temp_cjfs folder for next update
-   		 noOfLinesInJournal = sum(1 for line in open(jrnlPath))
-	         self.update_global_record(globalRecFile,inode_id,noOfLinesInJournal,2)
-
-                 #self.appendMergeToLocalJrnl(inode_id,globalRecFile)
-		 WRITE(inode_id)
-
-	      else:
-	         print "No changes to Journal or Backup"
-	         
-	   else:
-	      print type_of_change + ": Not monitored file " + path
-	            
-	elif (type_of_change == 'Created-' and
-             checkGoutput[0] != '.goutputstream' and
-             checkGoutput[0][-4:] != '.swp' and
-             splits[2][fileNameCheckLen-1] != '~'):
-           print("-->Created-")
-	   open(bkupFile, 'a').close()
-           globalRec = open(globalRecFile,"a")
-	   #0,last line added to journal, -1,last line written to file, 0,rolled up lines
-	   globalRec.write(path+','+ str(inode_id) + ',0,-1,0\n') #create first global record entry
-           globalRec.close()
-	else: 
-	   print "Unhandled event..."
 	
     def update_global_record(self, global_rec_file,inode_no,line_no,type_of_update):
 	print("func:update_global_record()")
@@ -214,8 +139,8 @@ class EventHandler(pyinotify.ProcessEvent):
         #subprocess.call(["./asm", "-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/Journal"])
         
         #PUT IN WHILE LOOP
-        subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid), "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid)])
-	process = subprocess.Popen(["./asm", "-d 3" ,"-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/receive"],stdout=subprocess.PIPE)
+        subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)])
+	process = subprocess.Popen(["./asm", "-d 3" ,"-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive"],stdout=subprocess.PIPE)
 	success, err = process.communicate()
 	print "WRITE RETURNED: "
 	print success, err		
@@ -226,8 +151,8 @@ class EventHandler(pyinotify.ProcessEvent):
 	   appendMergeToLocalJrnl(inodeid_,"client_"+CUR_CLIENT+"/global/globalRecord")
 	
         #write local journal to shared memory
-        subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid), "client_"+CURR_CLIENT+"/receiveA-"+str(inodeid)])
-        process = subprocess.Popen(["./asm", "-d 3","-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid)+" ","-f client_"+CURR_CLIENT+"/receive"],stdout=subprocess.PIPE)
+        subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "client_"+CURR_CLIENT+"/receiveA-"+str(inodeid_)])
+        process = subprocess.Popen(["./asm", "-d 3","-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive"],stdout=subprocess.PIPE)
 	success, err = process.communicate()
 	print "POST MERGE WRITE RETURNED: "
 	print success, err
@@ -246,8 +171,6 @@ class EventHandler(pyinotify.ProcessEvent):
 
 
     def appendMergeToLocalJrnl(self,inodeid_,globalRecordFile_):
-	#CURR_CLIENT = "01"
-	#inodeid_ = 921034
 	received_jrnl = "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)
 	local_jrnl = "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_)
 	globalRecordFile_ = "client_"+CURR_CLIENT+"/global/globalRecord"
@@ -293,6 +216,87 @@ class EventHandler(pyinotify.ProcessEvent):
 	else:
 	    print("Journal not received")
 
+
+    def handle_file_modified(self, path, type_of_change):
+	print("func:handle_file_modified()")
+	print(path)
+	splits = path.rsplit('/',2)
+	fileNameCheckLen = len(splits[2])	
+	checkGoutput = splits[2].rsplit('-',1)
+	updatedFile = path 
+	bkupFile = splits[0] + '/temp_cjfs/' + splits[2].strip('~')
+        globalRecFile = splits[0] + '/global/globalRecord' # to keep inode filename mapping
+	
+	tempF = os.open(updatedFile, os.O_RDWR|os.O_CREAT)
+	info = os.fstat(tempF) 
+	inode_id = info.st_ino #find inode_id for the created file
+	if (type_of_change == 'Delete-Renamed-' and
+           checkGoutput[0][-4:] != '.swp' and
+ 	   checkGoutput[0] != '.goutputstream' and
+           splits[2][fileNameCheckLen-1] != '~'):
+           print("-->Delete-Renamed-")
+	   if os.path.isfile(bkupFile):
+	      os.remove(bkupFile)
+	      print ("Removed-:" + bkupFile)
+	   else:
+              print("File not found: " + bkupFile)	
+	
+	elif (type_of_change == 'Modified-' and 
+	     checkGoutput[0] != '.goutputstream' and 
+             checkGoutput[0][-4:] != '.swp' and 
+             splits[2][fileNameCheckLen-1] != '~'):
+           print("-->Modified-")
+	   if os.path.isfile(bkupFile):
+	      difference = difflib.ndiff(open(bkupFile).readlines(), open(updatedFile).readlines())
+	      jrnlWriteBuff = list(difference) #convert all changes to a list
+	      lineNo = 0
+	      changes = "|"
+              for i in jrnlWriteBuff:
+                 tempLine = i.split(' ')
+                 change_transac = ""
+                 for chunks in range(1,len(tempLine)): # find a better way to do this
+                    change_transac += tempLine[chunks] + " "
+		 change_transac = change_transac[:-1]
+		 if tempLine[0] == '+' or tempLine[0] == '-':
+		    changes = changes + str(lineNo) + chr(168) + tempLine[0] + chr(168) + change_transac.strip('\n') + '|'
+                 lineNo=lineNo+1 #This line no is not going to be written on the Global Record
+
+
+	      print changes	 
+	      
+	      if not changes is "|":
+		 jrnlPath = splits[0] + "/Journal/A-" + str(inode_id)
+	         self.write_to_journal(jrnlPath,splits[2].strip('~'),changes,inode_id,globalRecFile) #write changes to journal
+	         shutil.copy(updatedFile, bkupFile) #once journal is written UPDATE file in temp_cjfs folder for next update
+   		 noOfLinesInJournal = sum(1 for line in open(jrnlPath))
+	         self.update_global_record(globalRecFile,inode_id,noOfLinesInJournal,2)
+
+                 #self.appendMergeToLocalJrnl(inode_id,globalRecFile)
+		 sTime = time.time()
+		 self.WRITE(inode_id)
+                 tTime = time.time() - sTime
+		 recordTime = open('client_'+CURR_CLIENT+'/ttime/write-times.txt' ,'a')
+		 recordTime.write(str(inode_id)+ ',' +str(tTime)+"\n")
+                 recordTime.close()
+
+	      else:
+	         print "No changes to Journal or Backup"
+	         
+	   else:
+	      print type_of_change + ": Not monitored file " + path
+	            
+	elif (type_of_change == 'Created-' and
+             checkGoutput[0] != '.goutputstream' and
+             checkGoutput[0][-4:] != '.swp' and
+             splits[2][fileNameCheckLen-1] != '~'):
+           print("-->Created-")
+	   open(bkupFile, 'a').close()
+           globalRec = open(globalRecFile,"a")
+	   #0,last line added to journal, -1,last line written to file, 0,rolled up lines
+	   globalRec.write(path+','+ str(inode_id) + ',0,-1,0\n') #create first global record entry
+           globalRec.close()
+	else: 
+	   print "Unhandled event..."
 
 
 def main():

@@ -23,6 +23,7 @@ for i in {1..2..1} # start 2 clients
      mkdir ./client_0$i/wf
      mkdir ./client_0$i/global
      mkdir ./client_0$i/receive
+     mkdir ./client_0$i/ttime
 
      #cp servers.list client_0$i/receive/servers.list
      #echo "Copied servers.list to client_0$i/receive/"
