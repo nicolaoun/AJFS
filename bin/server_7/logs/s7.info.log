@@ -1,22 +1,4 @@
-[INFO]    SERVER 7: 	2016-12-10 19:42:30 - DEBUG_LEVEL 0
-************************
-[INFO]    SERVER 7: Initialized on Port:4007
-[INFO]    SERVER 7: Starting server 7
-[INFO]    SERVER 7: Listening for connections to port 4007...
-[INFO]    SERVER 7: Accepting connections on port 4007
-[INFO]    SERVER 7: 	2016-12-10 20:05:03 - DEBUG_LEVEL 0
-************************
-[INFO]    SERVER 7: Initialized on Port:4007
-[INFO]    SERVER 7: Starting server 7
-[INFO]    SERVER 7: Listening for connections to port 4007...
-[INFO]    SERVER 7: Accepting connections on port 4007
-[INFO]    SERVER 7: 	2016-12-10 20:30:38 - DEBUG_LEVEL 0
-************************
-[INFO]    SERVER 7: Initialized on Port:4007
-[INFO]    SERVER 7: Starting server 7
-[INFO]    SERVER 7: Listening for connections to port 4007...
-[INFO]    SERVER 7: Accepting connections on port 4007
-[INFO]    SERVER 7: 	2016-12-12 13:49:08 - DEBUG_LEVEL 0
+[INFO]    SERVER 7: 	2017-01-30 21:02:27 - DEBUG_LEVEL 0
 ************************
 [INFO]    SERVER 7: Initialized on Port:4007
 [INFO]    SERVER 7: Starting server 7
@@ -26,32 +8,303 @@
 [INFO]    SERVER 7: Accepting connections on port 4007
 [INFO]    SERVER 7: 
 ********************************************************
-[INFO]    SERVER 7: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <0, 0>
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <0,0>, Local Tag: <0, 0>
 [INFO]    SERVER 7: ---------------------------------------------------------
 [INFO]    SERVER 7: READACK to 1, rcvTag=<0,0>, sendTag=<0,0>
 [INFO]    SERVER 7: ********************************************************
 [INFO]    SERVER 7: 
 ********************************************************
-[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <0, 0>
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <1,1>, Local Tag: <0, 0>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <0,0>, Local Tag: <0, 0>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: READACK to 2, rcvTag=<0,0>, sendTag=<0,0>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <1,2>, Local Tag: <0, 0>
 [INFO]    SERVER 7: ---------------------------------------------------------
 [INFO]    SERVER 7: Receiving file...0
 [INFO]    SERVER 7: New maxTag=<1,1> From:1
- --> Copied journal from ./server_7/rcvd_files/src1.[1,1].A-280009.temp to ./server_7/A-280009
+ --> Copied journal from ./server_7/rcvd_files/src1.[1,1].A-525070.temp to ./server_7/A-525070
 [INFO]    SERVER 7: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
 [INFO]    SERVER 7: ********************************************************
 [INFO]    SERVER 7: Accepted connection from localhost (IP:)
 [INFO]    SERVER 7: Accepting connections on port 4007
 [INFO]    SERVER 7: 
 ********************************************************
-[INFO]    SERVER 7: READ msg from 1, Object ID: A-280009, Tag Rcvd: <0,0>, Local Tag: <1, 1>
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <1,1>, Local Tag: <1, 1>
 [INFO]    SERVER 7: ---------------------------------------------------------
 [INFO]    SERVER 7: Transmitting file...0
-[INFO]    SERVER 7: READACK to 1, rcvTag=<0,0>, sendTag=<1,1>
+[INFO]    SERVER 7: READACK to 1, rcvTag=<1,1>, sendTag=<1,1>
 [INFO]    SERVER 7: ********************************************************
 [INFO]    SERVER 7: 
 ********************************************************
-[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-280009, Tag Rcvd: <1,1>, Local Tag: <1, 1>
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <2,1>, Local Tag: <1, 1>
 [INFO]    SERVER 7: ---------------------------------------------------------
 [INFO]    SERVER 7: Receiving file...0
-[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<1,1>, sendTag=<1,1>
+[INFO]    SERVER 7: New maxTag=<1,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[1,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<1,2>, sendTag=<1,2>
 [INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <1,2>, Local Tag: <1, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 2, rcvTag=<1,2>, sendTag=<1,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <2,2>, Local Tag: <1, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<2,1> From:1
+ --> Copied journal from ./server_7/rcvd_files/src1.[2,1].A-525070.temp to ./server_7/A-525070
+[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<2,1>, sendTag=<2,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<2,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[2,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<2,2>, sendTag=<2,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <2,1>, Local Tag: <2, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 1, rcvTag=<2,1>, sendTag=<2,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <3,1>, Local Tag: <2, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <2,2>, Local Tag: <2, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 2, rcvTag=<2,2>, sendTag=<2,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <3,2>, Local Tag: <2, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<3,1> From:1
+ --> Copied journal from ./server_7/rcvd_files/src1.[3,1].A-525070.temp to ./server_7/A-525070
+[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<3,1>, sendTag=<3,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <3,1>, Local Tag: <3, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 1, rcvTag=<3,1>, sendTag=<3,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <4,1>, Local Tag: <3, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<3,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[3,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<3,2>, sendTag=<3,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <3,2>, Local Tag: <3, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 2, rcvTag=<3,2>, sendTag=<3,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <4,2>, Local Tag: <3, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<4,1> From:1
+ --> Copied journal from ./server_7/rcvd_files/src1.[4,1].A-525070.temp to ./server_7/A-525070
+[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<4,1>, sendTag=<4,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<4,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[4,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<4,2>, sendTag=<4,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <4,1>, Local Tag: <4, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 1, rcvTag=<4,1>, sendTag=<4,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <5,1>, Local Tag: <4, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <4,2>, Local Tag: <4, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 2, rcvTag=<4,2>, sendTag=<4,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <5,2>, Local Tag: <4, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<5,1> From:1
+ --> Copied journal from ./server_7/rcvd_files/src1.[5,1].A-525070.temp to ./server_7/A-525070
+[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<5,1>, sendTag=<5,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <5,1>, Local Tag: <5, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 1, rcvTag=<5,1>, sendTag=<5,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <6,1>, Local Tag: <5, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<5,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[5,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<5,2>, sendTag=<5,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <5,2>, Local Tag: <5, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 2, rcvTag=<5,2>, sendTag=<5,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: New maxTag=<6,1> From:1
+ --> Copied journal from ./server_7/rcvd_files/src1.[6,1].A-525070.temp to ./server_7/A-525070
+[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<6,1>, sendTag=<6,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <6,2>, Local Tag: <5, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<6,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[6,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<6,2>, sendTag=<6,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <6,1>, Local Tag: <6, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 1, rcvTag=<6,1>, sendTag=<6,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <7,1>, Local Tag: <6, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <6,2>, Local Tag: <6, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 2, rcvTag=<6,2>, sendTag=<6,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <7,2>, Local Tag: <6, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<7,1> From:1
+ --> Copied journal from ./server_7/rcvd_files/src1.[7,1].A-525070.temp to ./server_7/A-525070
+[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<7,1>, sendTag=<7,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <7,1>, Local Tag: <7, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 1, rcvTag=<7,1>, sendTag=<7,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 1, Object ID: A-525070, Tag Rcvd: <8,1>, Local Tag: <7, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<7,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[7,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<7,2>, sendTag=<7,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 2, Object ID: A-525085, Tag Rcvd: <7,2>, Local Tag: <7, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Transmitting file...0
+[INFO]    SERVER 7: READACK to 2, rcvTag=<7,2>, sendTag=<7,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: WRITE msg from 2, Object ID: A-525085, Tag Rcvd: <8,2>, Local Tag: <7, 2>
+[INFO]    SERVER 7: ---------------------------------------------------------
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<8,2> From:2
+ --> Copied journal from ./server_7/rcvd_files/src2.[8,2].A-525085.temp to ./server_7/A-525085
+[INFO]    SERVER 7: WRITEACK from 2, rcvTag=<8,2>, sendTag=<8,2>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Receiving file...0
+[INFO]    SERVER 7: New maxTag=<8,1> From:1
+ --> Copied journal from ./server_7/rcvd_files/src1.[8,1].A-525070.temp to ./server_7/A-525070
+[INFO]    SERVER 7: WRITEACK from 1, rcvTag=<8,1>, sendTag=<8,1>
+[INFO]    SERVER 7: ********************************************************
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: Accepted connection from localhost (IP:)
+[INFO]    SERVER 7: Accepting connections on port 4007
+[INFO]    SERVER 7: 
+********************************************************
+[INFO]    SERVER 7: READ msg from 1, Object ID: A-525070, Tag Rcvd: <8,1>, Local Tag: <8, 1>
+[INFO]    SERVER 7: ---------------------------------------------------------

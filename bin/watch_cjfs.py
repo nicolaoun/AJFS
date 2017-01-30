@@ -121,7 +121,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	print("func:READ()")
         #Read Journal from Shared Memory
 	global CURR_CLIENT
-        subprocess.call(["./asm", "-t read", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive"])
+        subprocess.call(["./asm", "-t read", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive/"])
 	globalRecordFile_ = "client_" + CURR_CLIENT + "/global/globalRecord" 
 	#Compare version, if rcvd version greater
 	#new journal was written to shared memory (are we outdated for circular journal)
@@ -140,7 +140,7 @@ class EventHandler(pyinotify.ProcessEvent):
         
         #PUT IN WHILE LOOP
         subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "client_"+CURR_CLIENT+"/receive/A-"+str(inodeid_)])
-	process = subprocess.Popen(["./asm", "-d 3" ,"-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive"],stdout=subprocess.PIPE)
+	process = subprocess.Popen(["./asm", "-d 3" ,"-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive/"],stdout=subprocess.PIPE)
 	success, err = process.communicate()
 	print "WRITE RETURNED: "
 	print success, err		
@@ -152,7 +152,7 @@ class EventHandler(pyinotify.ProcessEvent):
 	
         #write local journal to shared memory
         subprocess.call(["cp", "client_"+CURR_CLIENT+"/Journal/A-"+str(inodeid_), "client_"+CURR_CLIENT+"/receiveA-"+str(inodeid_)])
-        process = subprocess.Popen(["./asm", "-d 3","-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive"],stdout=subprocess.PIPE)
+        process = subprocess.Popen(["./asm", "-d 3","-t write", "-i "+CURR_CLIENT+" ", "-o A-"+str(inodeid_)+" ","-f client_"+CURR_CLIENT+"/receive/"],stdout=subprocess.PIPE)
 	success, err = process.communicate()
 	print "POST MERGE WRITE RETURNED: "
 	print success, err
